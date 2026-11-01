@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="podsyncGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="0.8" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- 둥근 배경 (Squircle) -->
+  <rect width="32" height="32" rx="7" fill="url(#podsyncGrad)" />
+
+  <!-- 팟캐스트 / 라디오 전파 심볼 (White) -->
+  <g fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow)">
+    <!-- 중앙 안테나 원 -->
+    <circle cx="16" cy="18" r="2" fill="#ffffff" />
+    
+    <!-- 안테나 기둥 -->
+    <path d="M16 20v6" />
+    
+    <!-- 내부 전파 링 -->
+    <path d="M11.5 13.5a6.5 6.5 0 0 1 9 0" />
+    
+    <!-- 외부 전파 링 -->
+    <path d="M8 10a11.5 11.5 0 0 1 16 0" />
+  </g>
+</svg>

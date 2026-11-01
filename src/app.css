@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+}
+
+/* Light Theme Variables */
+html.light,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Slate Palette Reversal for Crisp Clean Light Mode */
+  --color-slate-950: #f8fafc; /* Page Background (slate-50) */
+  --color-slate-900: #ffffff; /* Card / Surface Background (White) */
+  --color-slate-800: #f1f5f9; /* Subtle Sub-surface / Input Background (slate-100) */
+  --color-slate-700: #e2e8f0; /* Borders / Dividers (slate-200) */
+  --color-slate-600: #cbd5e1; /* Hover Borders (slate-300) */
+  --color-slate-500: #64748b; /* Muted Text (slate-500) */
+  --color-slate-400: #475569; /* Secondary Text (slate-600) */
+  --color-slate-300: #334155; /* Body Text (slate-700) */
+  --color-slate-200: #1e293b; /* Strong Text (slate-800) */
+  --color-slate-100: #0f172a; /* Headings / Titles (slate-900) */
+}
+
+/* Light mode text-white headings override */
+html.light .text-white,
+[data-theme="light"] .text-white {
+  color: #0f172a;
+}
+
+/* Dark Theme Variables */
+html.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+}
