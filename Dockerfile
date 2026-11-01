@@ -1,13 +1,14 @@
-# Stage 1: Frontend SPA Build
-FROM node:24-alpine AS frontend-builder
+# Stage 1: Frontend SPA Build (Runs natively on host architecture, cached across targets)
+FROM --platform=$BUILDPLATFORM node:24-alpine AS frontend-builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
 
-# Stage 2: Go Single Binary Build
-FROM golang:alpine AS go-builder
+# Stage 2: Go Single Binary Build (Runs natively on host architecture with fast cross-compilation)
+FROM --platform=$BUILDPLATFORM golang:alpine AS go-builder
+ARG TARGETARCH
 WORKDIR /app
 
 RUN apk add --no-cache ca-certificates
@@ -18,9 +19,9 @@ RUN go mod download
 COPY . .
 COPY --from=frontend-builder /app/internal/web/dist ./internal/web/dist
 
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o podsync-manager ./cmd/server
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -ldflags="-s -w" -o podsync-manager ./cmd/server
 
-# Stage 3: Minimal Production Image (~20MB)
+# Stage 3: Minimal Production Image (~35MB)
 FROM alpine:3.21 AS runner
 
 RUN apk add --no-cache ca-certificates tzdata
