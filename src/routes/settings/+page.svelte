@@ -159,6 +159,30 @@
     ].filter(Boolean).length
   );
 
+  async function handleSubmit(e: SubmitEvent) {
+    e.preventDefault();
+    saving = true;
+    try {
+      const raw = liveToml();
+      const res = await fetch('/api/config/raw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rawToml: raw })
+      });
+      if (res.ok) {
+        alert(t('settings.saveSuccess') || '설정이 저장되었습니다.');
+        window.location.reload();
+      } else {
+        const err = await res.json();
+        alert(err.error || '저장에 실패했습니다.');
+      }
+    } catch {
+      alert('저장 중 오류가 발생했습니다.');
+    } finally {
+      saving = false;
+    }
+  }
+
   async function handleRollback() {
     if (!confirm(t('settings.rollbackConfirm'))) return;
     rollingBack = true;
@@ -339,7 +363,7 @@
     </div>
   {/if}
 
-  <form method="POST" onsubmit={() => (saving = true)} class="space-y-6">
+  <form onsubmit={handleSubmit} class="space-y-6">
     <!-- 1. 서버 [server] -->
     <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-5">
       <div class="flex items-center justify-between">

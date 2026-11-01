@@ -124,18 +124,18 @@ func SaveConfigAtomic(path string, data []byte) error {
 
 ## 5. Phased Migration Roadmap
 
-- [ ] **Phase 1: Frontend Decoupling**
+- [x] **Phase 1: Frontend Decoupling**
   - Switch `@sveltejs/adapter-node` to `@sveltejs/adapter-static` with fallback to `index.html`.
   - Extract server API contracts into clean REST API endpoints (`/api/...`).
-- [ ] **Phase 2: Go Backend Skeleton**
+- [x] **Phase 2: Go Backend Skeleton**
   - Initialize Go module (`go mod init github.com/badugisoft/podsync-manager`).
   - Implement authentication middleware, HMAC session cookie generation, and validation.
-- [ ] **Phase 3: Core Features in Go**
+- [x] **Phase 3: Core Features in Go**
   - TOML parser/serializer with atomic write and rollback.
   - Docker socket health check and restart deployment.
   - Real-time container log SSE streaming.
   - S3 / Local storage usage calculator.
-- [ ] **Phase 4: Packaging & Validation**
+- [x] **Phase 4: Packaging & Validation**
   - Multi-stage Dockerfile compiling Go binary and embedding frontend.
   - Multi-platform image build (`linux/amd64`, `linux/arm64`) using `scratch` or `alpine`.
   - Verification of parity across all 7 languages and dark/light modes.

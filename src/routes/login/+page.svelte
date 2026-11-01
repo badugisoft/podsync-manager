@@ -2,9 +2,39 @@
   import { Lock, Radio } from '@lucide/svelte';
   import ThemeToggle from '$lib/components/ThemeToggle.svelte';
   import { i18n, t, SUPPORTED_LOCALES } from '$lib/i18n/index.svelte';
+  import { page } from '$app/stores';
 
-  let { form }: { form: { error?: string } | null } = $props();
+  let username = $state('');
+  let password = $state('');
   let loading = $state(false);
+  let errorMessage = $state<string | null>(null);
+
+  async function handleLogin(e: SubmitEvent) {
+    e.preventDefault();
+    loading = true;
+    errorMessage = null;
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        errorMessage = data.error || '아이디 또는 비밀번호가 올바르지 않습니다.';
+        loading = false;
+        return;
+      }
+
+      const redirectTo = $page.url.searchParams.get('redirectTo') || '/';
+      window.location.href = redirectTo;
+    } catch (err: unknown) {
+      errorMessage = '서버와 통신할 수 없습니다.';
+      loading = false;
+    }
+  }
 </script>
 
 <div class="min-h-screen flex items-center justify-center bg-slate-950 px-4 sm:px-6 lg:px-8 relative">
@@ -35,13 +65,13 @@
       <p class="mt-2 text-sm text-slate-400">{t('login.subtitle')}</p>
     </div>
 
-    {#if form?.error}
+    {#if errorMessage}
       <div class="bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm p-3 rounded-lg text-center">
-        {form.error}
+        {errorMessage}
       </div>
     {/if}
 
-    <form class="mt-8 space-y-6" method="POST" onsubmit={() => (loading = true)}>
+    <form class="mt-8 space-y-6" onsubmit={handleLogin}>
       <div class="space-y-4">
         <div>
           <label for="username" class="block text-sm font-medium text-slate-300 mb-1">{t('login.username')}</label>
@@ -49,6 +79,7 @@
             id="username"
             name="username"
             type="text"
+            bind:value={username}
             required
             class="block w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="admin"
@@ -60,6 +91,7 @@
             id="password"
             name="password"
             type="password"
+            bind:value={password}
             required
             class="block w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="••••••••"
