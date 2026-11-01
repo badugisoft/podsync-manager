@@ -53,8 +53,9 @@ This project was designed and built in collaboration with the **Google Antigravi
     - Live Stream Exclusion: `--match-filter !is_live`
   - **Custom Podcast Metadata (`custom`)**:
     - Custom cover art URL, title/description overrides, author name, iTunes category, explicit content flag
-- **Atomic Writes & Backups**:
-  - Writes staged to temporary files (`.tmp`) before atomic `fs.rename` replacement
+- **Atomic Writes, Fallbacks & Backups**:
+  - Writes staged to temporary files (`.tmp`) before atomic `fs.rename` replacement within the mounted directory
+  - Automatic in-place fallback write on Docker single-file mounts (`EXDEV`, `EBUSY`, `EPERM`) to preserve file inode binding
   - Automatic `.bak` backup preserved before every write, supporting instant rollback
 - **Real-Time Visual Change Indicators**:
   - Live comparison against initial snapshot values
@@ -124,7 +125,8 @@ services:
     container_name: podsync
     restart: unless-stopped
     volumes:
-      - ./config/config.toml:/app/config/config.toml
+      # Mount directory containing config.toml
+      - ./config:/app/config
       - ./data:/app/data
 
   podsync-manager:
@@ -134,7 +136,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./config/config.toml:/app/config/config.toml
+      # Mount configuration directory (Directory mapping is strongly recommended for atomic .tmp writes & .bak backups)
+      - ./config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - NODE_ENV=production

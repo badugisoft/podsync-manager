@@ -84,7 +84,8 @@ services:
     container_name: podsync
     restart: unless-stopped
     volumes:
-      - ./config/config.toml:/app/config/config.toml
+      # Mount configuration folder (contains config.toml)
+      - ./config:/app/config
       - ./data:/app/data
     environment:
       - TZ=Asia/Seoul
@@ -98,8 +99,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      # Mount Podsync configuration file
-      - ./config/config.toml:/app/config/config.toml
+      # Mount Podsync configuration directory (Directory mapping is strongly recommended)
+      - ./config:/app/config
       # Mount Docker socket for container control and log streaming
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
@@ -111,10 +112,27 @@ services:
       - SESSION_SECRET=generate_a_random_secret_string
 ```
 
+> [!TIP]
+> **Directory Mapping Recommended**: Always mount the parent configuration **folder** (`-v ./config:/app/config`) rather than an isolated single file (`config.toml`). This allows atomic writes (`.tmp` -> `rename`) and automated `.bak` backups to take place on the exact same host filesystem without cross-device link errors (`EXDEV`) or inode decoupling. (Podsync Manager also includes an in-place fallback if a single file is mounted).
+
 Run the stack:
 
 ```bash
 docker compose up -d
+```
+
+### Docker Run CLI
+
+Alternatively, run Podsync Manager directly with Docker CLI:
+
+```bash
+docker run -d \
+  --name podsync-manager \
+  -p 3000:3000 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v ./config:/app/config \
+  -e ADMIN_PASSWORD=your_secure_password \
+  ghcr.io/badugisoft/podsync-manager:latest
 ```
 
 Access the dashboard at `http://localhost:3000`.

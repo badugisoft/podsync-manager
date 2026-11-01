@@ -7,9 +7,35 @@ export function getConfigPath(): string {
   if (process.env.PODSYNC_CONFIG_PATH) {
     return process.env.PODSYNC_CONFIG_PATH;
   }
+  // 프로덕션 컨테이너 환경의 기본 디렉터리 경로 (/app/config)
+  if (process.env.NODE_ENV === 'production') {
+    return '/app/config/config.toml';
+  }
   // 로컬 개발 환경용 기본 후보 경로
   const localHostPath = '/Users/badugiss/work/badugiss/docker-mini26/services/podsync/config/config.toml';
   return localHostPath;
+}
+
+/**
+ * 설정 파일을 안전하게 디스크에 저장합니다.
+ * 1. 기본: 임시 파일(.tmp)을 생성한 후 fs.rename을 통한 원자적(Atomic) 교체 수행.
+ * 2. Fallback: Docker 단일 파일 마운트 환경 등으로 인해 rename 시 EXDEV, EBUSY, EPERM 에러가 발생하는 경우,
+ *    마운트 포인트(inode)를 유지하면서 기존 파일에 직접 덮어쓰기(In-place write)로 안전하게 자동 전환합니다.
+ */
+async function writeConfigFile(filePath: string, content: string): Promise<void> {
+  const tmpPath = `${filePath}.tmp`;
+  try {
+    await fs.writeFile(tmpPath, content, 'utf-8');
+    await fs.rename(tmpPath, filePath);
+  } catch (err: unknown) {
+    const error = err as NodeJS.ErrnoException;
+    if (error.code === 'EXDEV' || error.code === 'EBUSY' || error.code === 'EPERM') {
+      await fs.writeFile(filePath, content, 'utf-8');
+      await fs.unlink(tmpPath).catch(() => {});
+    } else {
+      throw err;
+    }
+  }
 }
 
 export async function loadConfig(): Promise<{ config: PodsyncConfig; rawToml: string; path: string }> {
@@ -54,10 +80,8 @@ export async function saveConfig(newConfig: PodsyncConfig): Promise<void> {
   // 2. TOML 직렬화
   const tomlString = stringify(newConfig as Record<string, unknown>);
 
-  // 3. 임시 파일(.tmp) 작성 후 원자적 rename
-  const tmpPath = `${filePath}.tmp`;
-  await fs.writeFile(tmpPath, tomlString, 'utf-8');
-  await fs.rename(tmpPath, filePath);
+  // 3. 임시 파일(.tmp) 작성 후 원자적 교체 (단일 파일 마운트 시 in-place 덮어쓰기 자동 fallback)
+  await writeConfigFile(filePath, tomlString);
 }
 
 export async function getConfigMTime(): Promise<number> {
@@ -136,10 +160,8 @@ export async function saveRawToml(rawToml: string): Promise<void> {
     await fs.copyFile(filePath, `${filePath}.bak`);
   } catch {}
 
-  // 3. 원자적 임시 쓰기 및 교체
-  const tmpPath = `${filePath}.tmp`;
-  await fs.writeFile(tmpPath, rawToml, 'utf-8');
-  await fs.rename(tmpPath, filePath);
+  // 3. 임시 파일(.tmp) 작성 후 원자적 교체 (단일 파일 마운트 시 in-place 덮어쓰기 자동 fallback)
+  await writeConfigFile(filePath, rawToml);
 }
 
 export async function getFeed(feedId: string): Promise<FeedConfig | null> {
