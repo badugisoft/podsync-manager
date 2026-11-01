@@ -31,7 +31,7 @@
 
   async function handleLogout() {
     try {
-      await fetch('/logout', { method: 'POST' });
+      await fetch('/api/auth/logout', { method: 'POST' });
     } catch {}
     document.cookie = 'podsync_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     window.location.href = '/login';

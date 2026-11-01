@@ -2,10 +2,49 @@
   import { ArrowLeft, Save, RotateCcw } from '@lucide/svelte';
   import FeedForm from '$lib/components/FeedForm.svelte';
   import { t } from '$lib/i18n';
+  import { parseFeedFormData } from '$lib/utils/feedPayload';
+  import { goto } from '$app/navigation';
 
-  let { data, form } = $props();
+  let { data } = $props();
   let saving = $state(false);
+  let errorMessage = $state<string | null>(null);
   let feedFormRef = $state<ReturnType<typeof FeedForm> | null>(null);
+
+  async function handleSubmit(e: SubmitEvent) {
+    e.preventDefault();
+    saving = true;
+    errorMessage = null;
+
+    const formEl = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(formEl);
+    const { feed } = parseFeedFormData(formData);
+
+    if (!feed.url) {
+      errorMessage = '소스 URL을 입력해주세요.';
+      saving = false;
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/feeds/${encodeURIComponent(data.feedId)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feed })
+      });
+
+      const resData = await res.json();
+      if (!res.ok) {
+        errorMessage = resData.error || '피드 수정에 실패했습니다.';
+        saving = false;
+        return;
+      }
+
+      await goto(`/feeds/${encodeURIComponent(data.feedId)}`);
+    } catch {
+      errorMessage = '서버와 통신할 수 없습니다.';
+      saving = false;
+    }
+  }
 </script>
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -45,8 +84,14 @@
     </div>
   </div>
 
-  <form method="POST" onsubmit={() => (saving = true)} class="space-y-6">
-    <FeedForm bind:this={feedFormRef} feed={data.feed} isEdit={true} error={form?.error} {saving} />
+  {#if errorMessage}
+    <div class="bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm p-4 rounded-xl">
+      {errorMessage}
+    </div>
+  {/if}
+
+  <form onsubmit={handleSubmit} class="space-y-6">
+    <FeedForm bind:this={feedFormRef} feed={data.feed} isEdit={true} error={errorMessage} {saving} />
 
     <!-- 제출 버튼 -->
     <div class="flex items-center justify-end gap-3 pt-2">

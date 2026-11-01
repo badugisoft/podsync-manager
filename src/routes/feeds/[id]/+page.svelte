@@ -56,12 +56,27 @@
     }
   }
 
-  function confirmDelete(e: Event) {
+  async function confirmDelete(e: SubmitEvent) {
+    e.preventDefault();
     if (!confirm(t('feedDetail.deleteConfirm', { id: data.feedId }))) {
-      e.preventDefault();
       return;
     }
     deleting = true;
+    try {
+      const res = await fetch(`/api/feeds/${encodeURIComponent(data.feedId)}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        window.location.href = '/';
+      } else {
+        const err = await res.json();
+        alert(err.error || '삭제에 실패했습니다.');
+        deleting = false;
+      }
+    } catch {
+      alert('서버와 통신할 수 없습니다.');
+      deleting = false;
+    }
   }
 
   function decodeHtmlEntities(text: string): string {
@@ -103,7 +118,7 @@
   let filteredEpisodes = $derived(() => {
     const q = episodeSearch.trim().toLowerCase();
     if (!q) return data.episodes;
-    return data.episodes.filter((ep) => ep.title.toLowerCase().includes(q) || ep.description.toLowerCase().includes(q));
+    return data.episodes.filter((ep: { title: string; description: string }) => ep.title.toLowerCase().includes(q) || ep.description.toLowerCase().includes(q));
   });
 
   let formatLabel = $derived(
@@ -159,7 +174,7 @@
         <Edit class="w-3.5 h-3.5" />
         <span>{t('common.edit')}</span>
       </a>
-      <form method="POST" action="?/delete" onsubmit={confirmDelete}>
+      <form onsubmit={confirmDelete}>
         <button
           type="submit"
           disabled={deleting}
