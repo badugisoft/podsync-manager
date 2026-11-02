@@ -170,14 +170,14 @@
         body: JSON.stringify({ rawToml: raw })
       });
       if (res.ok) {
-        alert(t('settings.saveSuccess') || '설정이 저장되었습니다.');
+        alert(t('settings.saveSuccess'));
         window.location.reload();
       } else {
         const err = await res.json();
-        alert(err.error || '저장에 실패했습니다.');
+        alert(err.error || t('settings.saveFailed'));
       }
     } catch {
-      alert('저장 중 오류가 발생했습니다.');
+      alert(t('settings.saveError'));
     } finally {
       saving = false;
     }

@@ -177,6 +177,8 @@ export default {
     saveChanges: 'Save Changes',
     saving: 'Saving...',
     updating: 'Updating...',
+    previewEpisodes: 'Check Episodes',
+    previewLoading: 'Checking...',
     sourcePlatform: 'Source Platform',
     sourcePlatformDesc: 'Podsync officially supports 4 platforms: YouTube, SoundCloud, Vimeo, and Twitch.',
     comingSoon: 'Coming soon',
@@ -349,6 +351,9 @@ export default {
   settings: {
     pageTitle: 'Global Settings',
     pageSubtitle: 'Configure general server environment and infrastructure options for Podsync.',
+    saveSuccess: 'Settings saved successfully.',
+    saveFailed: 'Failed to save settings.',
+    saveError: 'An error occurred while saving.',
     inputReset: 'Revert to Original',
     rollback: 'Rollback Backup',
     rollbackConfirm: 'Rollback to previous backup config (.bak)?',
@@ -413,8 +418,8 @@ export default {
     securityNoticeDesc: 'S3 Access Key and Secret Key should be managed via environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY).',
     downloaderSection: 'Downloader',
     downloaderDesc: 'yt-dlp engine options such as automated self-updates and execution timeouts.',
-    downloaderTimeout: 'Download Timeout (Seconds)',
-    downloaderTimeoutHelp: 'Aborts download task when specified seconds exceed.',
+    downloaderTimeout: 'Download Timeout (Minutes)',
+    downloaderTimeoutHelp: 'Aborts download task when specified minutes exceed. (Default: 15 minutes)',
     downloaderSelfUpdate: 'Enable yt-dlp Auto-Update',
     downloaderSelfUpdateHelp: 'Automatically updates yt-dlp to latest version on restart.',
     logSection: 'Log Files',
@@ -462,5 +467,24 @@ export default {
     signIn: 'Sign In',
     signingIn: 'Signing in...',
     invalidCreds: 'Invalid username or password'
+  },
+  // Episode Filter Preview Modal
+  previewModal: {
+    title: 'Episode List & Filter Verification',
+    subtitle: 'Latest episodes with current filters and youtube-dl arguments applied.',
+    totalCount: '{total} Total',
+    passedCount: '{count} Included',
+    excludedCount: '{count} Excluded',
+    tabAll: 'All',
+    tabPassed: 'Included',
+    tabExcluded: 'Excluded',
+    statusPassed: 'Passed',
+    statusExcluded: 'Filtered Out',
+    emptyList: 'No episodes found.',
+    noUrlError: 'Please enter a source URL first.',
+    openLink: 'Open Video',
+    close: 'Close',
+    reasonLabel: 'Reason',
+    containerNotice: 'Simulated via Podsync container yt-dlp downloader and feed filter rules.'
   }
 } as const;

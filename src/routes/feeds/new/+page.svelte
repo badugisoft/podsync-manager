@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { ArrowLeft, Save, RotateCcw } from '@lucide/svelte';
+  import { ArrowLeft, Save, RotateCcw, ListFilter } from '@lucide/svelte';
   import FeedForm from '$lib/components/FeedForm.svelte';
+  import EpisodePreviewModal from '$lib/components/EpisodePreviewModal.svelte';
   import { t } from '$lib/i18n';
   import { parseFeedFormData } from '$lib/utils/feedPayload';
   import { goto } from '$app/navigation';
@@ -9,6 +10,43 @@
   let saving = $state(false);
   let errorMessage = $state<string | null>(null);
   let feedFormRef = $state<ReturnType<typeof FeedForm> | null>(null);
+
+  // 에피소드 목록 미리보기 상태
+  let previewModalOpen = $state(false);
+  let previewLoading = $state(false);
+  let previewError = $state<string | null>(null);
+  let previewData = $state<any>(null);
+
+  async function handleCheckEpisodes() {
+    if (!feedFormRef) return;
+    const payload = feedFormRef.getPreviewPayload();
+    if (!payload.url) {
+      alert(t('previewModal.noUrlError'));
+      return;
+    }
+
+    previewModalOpen = true;
+    previewLoading = true;
+    previewError = null;
+    previewData = null;
+
+    try {
+      const res = await fetch('/api/feeds/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || `HTTP ${res.status}`);
+      }
+      previewData = await res.json();
+    } catch (err: any) {
+      previewError = err.message || '에피소드 조회 중 오류가 발생했습니다.';
+    } finally {
+      previewLoading = false;
+    }
+  }
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
@@ -105,6 +143,14 @@
         {t('feedForm.cancel')}
       </a>
       <button
+        type="button"
+        onclick={handleCheckEpisodes}
+        class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 shadow-sm transition-colors"
+      >
+        <ListFilter class="w-4 h-4 text-indigo-400" />
+        <span>{t('feedForm.previewEpisodes')}</span>
+      </button>
+      <button
         type="submit"
         disabled={saving}
         class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors disabled:opacity-50"
@@ -114,4 +160,13 @@
       </button>
     </div>
   </form>
+
+  <!-- 에피소드 목록 & 필터 검증 모달 -->
+  <EpisodePreviewModal
+    open={previewModalOpen}
+    loading={previewLoading}
+    error={previewError}
+    {previewData}
+    onclose={() => (previewModalOpen = false)}
+  />
 </div>

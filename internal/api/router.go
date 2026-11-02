@@ -50,6 +50,8 @@ func NewRouter() *chi.Mux {
 			// Feeds
 			protected.Get("/feeds", HandleListFeeds)
 			protected.Post("/feeds", HandleCreateFeed)
+			protected.Post("/feeds/preview", HandlePreviewFeed)
+			protected.Post("/feeds/resolve-url", HandleResolveFeedURL)
 			protected.Get("/feeds/check-id", HandleCheckFeedID)
 			protected.Get("/feeds/{id}", HandleGetFeed)
 			protected.Put("/feeds/{id}", HandleUpdateFeed)

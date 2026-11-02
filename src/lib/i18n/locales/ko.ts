@@ -177,6 +177,8 @@ export default {
     saveChanges: '변경사항 저장',
     saving: '저장 중...',
     updating: '수정 중...',
+    previewEpisodes: '에피소드 목록 확인',
+    previewLoading: '에피소드 확인 중...',
     sourcePlatform: '소스 플랫폼',
     sourcePlatformDesc: 'Podsync가 공식 지원하는 4개 플랫폼(YouTube, SoundCloud, Vimeo, Twitch)입니다.',
     comingSoon: '준비 중',
@@ -349,6 +351,9 @@ export default {
   settings: {
     pageTitle: '글로벌 환경 설정',
     pageSubtitle: 'Podsync 서비스 전반에 적용되는 기본 환경 및 인프라 옵션을 구성합니다.',
+    saveSuccess: '설정이 저장되었습니다.',
+    saveFailed: '저장에 실패했습니다.',
+    saveError: '저장 중 오류가 발생했습니다.',
     inputReset: '원본으로 되돌리기',
     rollback: '직전 백업으로 복원',
     rollbackConfirm: '이전에 저장되었던 백업본(.bak)으로 설정을 되돌리시겠습니까?',
@@ -413,8 +418,8 @@ export default {
     securityNoticeDesc: 'S3 Access Key와 Secret Key는 파일에 노출되지 않도록 환경 변수(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)로 관리하는 것을 권장합니다.',
     downloaderSection: '다운로더',
     downloaderDesc: '미디어를 추출하는 yt-dlp의 자동 업데이트 및 실행 타임아웃을 지정합니다.',
-    downloaderTimeout: '다운로드 제한 시간 (초 단위)',
-    downloaderTimeoutHelp: '지정한 시간 초과 시 작업을 중단합니다.',
+    downloaderTimeout: '다운로드 제한 시간 (분 단위)',
+    downloaderTimeoutHelp: '에피소드 다운로드 시 지정한 시간(분) 초과 시 작업을 중단합니다. (기본 15분)',
     downloaderSelfUpdate: 'yt-dlp 자동 업데이트 활성화',
     downloaderSelfUpdateHelp: '컨테이너 재시작 시 yt-dlp를 최신 버전으로 자동 갱신합니다.',
     logSection: '로그 파일',
@@ -462,5 +467,24 @@ export default {
     signIn: '로그인',
     signingIn: '로그인 중...',
     invalidCreds: '아이디 또는 비밀번호가 올바르지 않습니다'
+  },
+  // Episode Filter Preview Modal
+  previewModal: {
+    title: '에피소드 목록 & 필터 검증',
+    subtitle: '입력된 필터 및 youtube-dl 옵션을 적용한 최신 영상 목록입니다.',
+    totalCount: '총 {total}개',
+    passedCount: '{count}개 포함',
+    excludedCount: '{count}개 제외',
+    tabAll: '전체',
+    tabPassed: '포함됨',
+    tabExcluded: '제외됨',
+    statusPassed: '포함 (Pass)',
+    statusExcluded: '제외됨 (Filtered)',
+    emptyList: '조회된 영상이 없습니다.',
+    noUrlError: '먼저 소스 미디어 URL을 입력해주세요.',
+    openLink: '영상 열기',
+    close: '닫기',
+    reasonLabel: '제외 사유',
+    containerNotice: 'Podsync 컨테이너의 yt-dlp 엔진 및 필터 규칙을 통해 시뮬레이션된 결과입니다.'
   }
 } as const;

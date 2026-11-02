@@ -165,3 +165,44 @@ func StreamLogs(ctx context.Context, w io.Writer, tail string, follow bool) erro
 	}
 	return nil
 }
+
+// ExecInPodsync executes a command inside the running podsync container and returns its stdout and stderr.
+func ExecInPodsync(ctx context.Context, cmd []string) (stdout string, stderr string, err error) {
+	cli, err := NewDockerClient()
+	if err != nil {
+		return "", "", err
+	}
+	defer cli.Close()
+
+	name := getContainerName()
+	execConfig := container.ExecOptions{
+		Cmd:          cmd,
+		AttachStdout: true,
+		AttachStderr: true,
+	}
+
+	execID, err := cli.ContainerExecCreate(ctx, name, execConfig)
+	if err != nil {
+		return "", "", err
+	}
+
+	resp, err := cli.ContainerExecAttach(ctx, execID.ID, container.ExecStartOptions{})
+	if err != nil {
+		return "", "", err
+	}
+	defer resp.Close()
+
+	var outBuf, errBuf strings.Builder
+	// stdcopy requires io.Writer, strings.Builder satisfies io.Writer
+	_, err = stdcopy.StdCopy(&outBuf, &errBuf, resp.Reader)
+	if err != nil && !errors.Is(err, io.EOF) {
+		return outBuf.String(), errBuf.String(), err
+	}
+
+	inspect, err := cli.ContainerExecInspect(ctx, execID.ID)
+	if err == nil && inspect.ExitCode != 0 {
+		return outBuf.String(), errBuf.String(), errors.New(errBuf.String())
+	}
+
+	return outBuf.String(), errBuf.String(), nil
+}

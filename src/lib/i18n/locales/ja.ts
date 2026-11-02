@@ -177,6 +177,8 @@ export default {
     saveChanges: '変更を保存',
     saving: '保存中...',
     updating: '更新中...',
+    previewEpisodes: 'エピソード一覧確認',
+    previewLoading: '確認中...',
     sourcePlatform: 'ソースプラットフォーム',
     sourcePlatformDesc: 'Podsync公式対応の4プラットフォーム（YouTube、SoundCloud、Vimeo、Twitch）です。',
     comingSoon: '準備中',
@@ -349,6 +351,9 @@ export default {
   settings: {
     pageTitle: 'グローバル設定',
     pageSubtitle: 'Podsyncサービス全体の基本環境およびインフラを設定します。',
+    saveSuccess: '設定が保存されました。',
+    saveFailed: '設定の保存に失敗しました。',
+    saveError: '保存中にエラーが発生しました。',
     inputReset: '元に戻す',
     rollback: '直前のバックアップに戻す',
     rollbackConfirm: '直前のバックアップ(.bak)に戻しますか？',
@@ -413,8 +418,8 @@ export default {
     securityNoticeDesc: 'S3 Access KeyとSecret Keyは環境変数(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)で管理することを推奨します。',
     downloaderSection: 'ダウンローダー',
     downloaderDesc: 'yt-dlpの自動アップデートや実行タイムアウトを設定します。',
-    downloaderTimeout: 'ダウンロード制限時間 (秒)',
-    downloaderTimeoutHelp: '指定秒数を超過した場合は処理を中止します。',
+    downloaderTimeout: 'ダウンロード制限時間 (分)',
+    downloaderTimeoutHelp: 'エピソードのダウンロードが指定分数を超過した場合は中止します。(デフォルト: 15分)',
     downloaderSelfUpdate: 'yt-dlp自動アップデート有効化',
     downloaderSelfUpdateHelp: '再起動時にyt-dlpを最新バージョンへ自動更新します。',
     logSection: 'ログファイル',
@@ -462,5 +467,24 @@ export default {
     signIn: 'ログイン',
     signingIn: 'ログイン中...',
     invalidCreds: 'ユーザー名またはパスワードが正しくありません'
+  },
+  // Episode Filter Preview Modal
+  previewModal: {
+    title: 'エピソード一覧＆フィルター検証',
+    subtitle: '現在のフィルターとyoutube-dlオプションを適用した最新動画一覧です。',
+    totalCount: '合計 {total} 件',
+    passedCount: '{count} 件 収録',
+    excludedCount: '{count} 件 除外',
+    tabAll: 'すべて',
+    tabPassed: '収録',
+    tabExcluded: '除外',
+    statusPassed: '収録 (Pass)',
+    statusExcluded: '除外 (Filtered)',
+    emptyList: '動画が見つかりませんでした。',
+    noUrlError: '先にソースURLを入力してください。',
+    openLink: '動画を開く',
+    close: '閉じる',
+    reasonLabel: '除外理由',
+    containerNotice: 'Podsyncコンテナのyt-dlpエンジンとフィルター規則でシミュレーションされた結果です。'
   }
 } as const;

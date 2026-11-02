@@ -177,6 +177,8 @@ export default {
     saveChanges: 'Änderungen speichern',
     saving: 'Wird gespeichert...',
     updating: 'Wird aktualisiert...',
+    previewEpisodes: 'Episoden prüfen',
+    previewLoading: 'Wird geprüft...',
     sourcePlatform: 'Quellplattform',
     sourcePlatformDesc: 'Podsync unterstützt offiziell 4 Plattformen: YouTube, SoundCloud, Vimeo und Twitch.',
     comingSoon: 'Demnächst',
@@ -349,6 +351,9 @@ export default {
   settings: {
     pageTitle: 'Globale Einstellungen',
     pageSubtitle: 'Konfigurieren Sie globale Umgebungs- und Infrastrukturoptionen für Podsync.',
+    saveSuccess: 'Einstellungen erfolgreich gespeichert.',
+    saveFailed: 'Fehler beim Speichern der Einstellungen.',
+    saveError: 'Beim Speichern ist ein Fehler aufgetreten.',
     inputReset: 'Auf Original zurücksetzen',
     rollback: 'Auf Backup zurücksetzen',
     rollbackConfirm: 'Möchten Sie die Konfiguration auf das vorherige Backup (.bak) zurücksetzen?',
@@ -410,8 +415,8 @@ export default {
     securityNoticeDesc: 'S3-Access-Key und Secret-Key sollten über Umgebungsvariablen verwaltet werden (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY).',
     downloaderSection: 'Downloader',
     downloaderDesc: 'Optionen der yt-dlp-Engine wie automatische Updates und Timeouts.',
-    downloaderTimeout: 'Download-Timeout (Sekunden)',
-    downloaderTimeoutHelp: 'Bricht den Download ab, wenn das angegebene Zeitlimit überschritten wird.',
+    downloaderTimeout: 'Download-Timeout (Minuten)',
+    downloaderTimeoutHelp: 'Bricht den Download ab, wenn das angegebene Zeitlimit in Minuten überschritten wird (Standard: 15 Min).',
     downloaderSelfUpdate: 'Automatische yt-dlp-Updates aktivieren',
     downloaderSelfUpdateHelp: 'Aktualisiert yt-dlp beim Neustart automatisch auf die neueste Version.',
     logSection: 'Protokolldateien',
@@ -459,5 +464,24 @@ export default {
     signIn: 'Anmelden',
     signingIn: 'Wird angemeldet...',
     invalidCreds: 'Ungültiger Benutzername oder Passwort'
+  },
+  // Episode Filter Preview Modal
+  previewModal: {
+    title: 'Episodenliste & Filterprüfung',
+    subtitle: 'Aktuelle Videos mit angewendeten Filtern und youtube-dl-Optionen.',
+    totalCount: 'Gesamt {total}',
+    passedCount: '{count} enthalten',
+    excludedCount: '{count} ausgeschlossen',
+    tabAll: 'Alle',
+    tabPassed: 'Enthalten',
+    tabExcluded: 'Ausgeschlossen',
+    statusPassed: 'Enthalten (Pass)',
+    statusExcluded: 'Ausgeschlossen (Filtered)',
+    emptyList: 'Keine Videos gefunden.',
+    noUrlError: 'Bitte geben Sie zuerst die Quell-URL ein.',
+    openLink: 'Video öffnen',
+    close: 'Schließen',
+    reasonLabel: 'Ausschlussgrund',
+    containerNotice: 'Simuliert über den yt-dlp Downloader des Podsync-Containers und Filterregeln.'
   }
 } as const;

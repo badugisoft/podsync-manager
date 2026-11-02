@@ -65,6 +65,38 @@
       }
     }, 250);
   }
+
+  // YouTube @handle URL -> /channel/UC... 자동 변환 상태
+  let resolvingUrl = $state(false);
+  let resolvedUrlNotice = $state<string | null>(null);
+
+  async function handleUrlBlur() {
+    const trimmed = url.trim();
+    if (trimmed.includes('youtube.com/@') || trimmed.includes('youtu.be/@')) {
+      resolvingUrl = true;
+      try {
+        const res = await fetch('/api/feeds/resolve-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: trimmed })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.changed && data.resolved) {
+            url = data.resolved;
+            resolvedUrlNotice = `Podsync 호환을 위해 채널 ID 주소로 자동 변환되었습니다: ${data.resolved}`;
+            setTimeout(() => {
+              resolvedUrlNotice = null;
+            }, 6000);
+          }
+        }
+      } catch {
+        // ignore
+      } finally {
+        resolvingUrl = false;
+      }
+    }
+  }
   let url = $state('');
   let format = $state<'audio' | 'video'>('audio');
   let quality = $state<'low' | 'high'>('low');
@@ -391,6 +423,16 @@
 
   export function reset() {
     initFromFeed(feed);
+  }
+
+  export function getPreviewPayload() {
+    const { fObj } = buildCurrentFeedPayload();
+    return {
+      url: url.trim(),
+      filters: fObj.filters || null,
+      youtube_dl_args: (fObj.youtube_dl_args as string[]) || [],
+      page_size: (fObj.page_size as number) || 10
+    };
   }
 
   // feed 객체가 실제로 변경된 경우에만 재초기화 (폼 입력 상태 변경 시 재실행 방지)
@@ -811,16 +853,31 @@
             </span>
           {/if}
         </label>
-        <input
-          id="url"
-          name="url"
-          type="url"
-          required
-          bind:value={url}
-          placeholder={t('feedForm.sourceUrlPlaceholder')}
-          class="block w-full px-3.5 py-2.5 bg-slate-950 border {isModifiedUrl ? 'border-amber-500/50 focus:ring-amber-500' : 'border-slate-700 focus:ring-indigo-500'} rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 text-sm"
-        />
-        <p class="text-[11px] text-slate-500 mt-1">{t('feedForm.sourceUrlHelp')}</p>
+        <div class="relative">
+          <input
+            id="url"
+            name="url"
+            type="url"
+            required
+            bind:value={url}
+            onblur={handleUrlBlur}
+            placeholder={t('feedForm.sourceUrlPlaceholder')}
+            class="block w-full px-3.5 py-2.5 bg-slate-950 border {isModifiedUrl ? 'border-amber-500/50 focus:ring-amber-500' : 'border-slate-700 focus:ring-indigo-500'} rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 text-sm pr-9"
+          />
+          {#if resolvingUrl}
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 text-indigo-400">
+              <Loader2 class="w-4 h-4 animate-spin" />
+            </div>
+          {/if}
+        </div>
+        {#if resolvedUrlNotice}
+          <p class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 rounded-lg mt-1.5 flex items-center gap-1.5 animate-in fade-in">
+            <Check class="w-3.5 h-3.5 shrink-0" />
+            <span>{resolvedUrlNotice}</span>
+          </p>
+        {:else}
+          <p class="text-[11px] text-slate-500 mt-1">{t('feedForm.sourceUrlHelp')}</p>
+        {/if}
       </div>
 
       <div>

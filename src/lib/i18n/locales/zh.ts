@@ -177,6 +177,8 @@ export default {
     saveChanges: '保存更改',
     saving: '保存中...',
     updating: '更新中...',
+    previewEpisodes: '查看剧集列表',
+    previewLoading: '检查中...',
     sourcePlatform: '源平台',
     sourcePlatformDesc: 'Podsync 官方支持的 4 大平台（YouTube、SoundCloud、Vimeo、Twitch）。',
     comingSoon: '即将推出',
@@ -349,6 +351,9 @@ export default {
   settings: {
     pageTitle: '全局设置',
     pageSubtitle: '配置 Podsync 服务的通用服务器环境和基础设置。',
+    saveSuccess: '设置已成功保存。',
+    saveFailed: '保存设置失败。',
+    saveError: '保存时发生错误。',
     inputReset: '恢复原状',
     rollback: '恢复到上次备份',
     rollbackConfirm: '是否恢复到上次保存的备份 (.bak)？',
@@ -413,8 +418,8 @@ export default {
     securityNoticeDesc: '建议通过环境变量 (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY) 管理 S3 密钥。',
     downloaderSection: '下载器',
     downloaderDesc: 'yt-dlp 的自动更新和执行超时设置。',
-    downloaderTimeout: '下载超时时间 (秒)',
-    downloaderTimeoutHelp: '超出指定秒数时中止任务。',
+    downloaderTimeout: '下载超时时间 (分钟)',
+    downloaderTimeoutHelp: '下载超出指定分钟数时中止任务 (默认: 15分钟)。',
     downloaderSelfUpdate: '启用 yt-dlp 自动更新',
     downloaderSelfUpdateHelp: '重启容器时自动更新 yt-dlp 到最新版本。',
     logSection: '日志文件',
@@ -462,5 +467,24 @@ export default {
     signIn: '登录',
     signingIn: '登录中...',
     invalidCreds: '用户名或密码错误'
+  },
+  // Episode Filter Preview Modal
+  previewModal: {
+    title: '剧集列表与过滤器验证',
+    subtitle: '应用当前过滤器和youtube-dl参数后的最新视频列表。',
+    totalCount: '共 {total} 个',
+    passedCount: '{count} 个收录',
+    excludedCount: '{count} 个排除',
+    tabAll: '全部',
+    tabPassed: '收录',
+    tabExcluded: '排除',
+    statusPassed: '收录 (Pass)',
+    statusExcluded: '已排除 (Filtered)',
+    emptyList: '未找到视频。',
+    noUrlError: '请先输入源媒体 URL。',
+    openLink: '打开视频',
+    close: '关闭',
+    reasonLabel: '排除原因',
+    containerNotice: '通过 Podsync 容器的 yt-dlp 引擎及过滤规则模拟的结果。'
   }
 } as const;

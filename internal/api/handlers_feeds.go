@@ -122,12 +122,15 @@ func HandleCreateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Automatically resolve @handle URLs to canonical /channel/UC... URLs for Podsync compatibility
+	payload.Feed.URL = episodes.ResolveYouTubeChannelURL(r.Context(), payload.Feed.URL)
+
 	if err := config.UpsertFeed(payload.ID, payload.Feed); err != nil {
 		JSONError(w, http.StatusInternalServerError, "Failed to save feed: "+err.Error())
 		return
 	}
 
-	JSON(w, http.StatusCreated, map[string]any{"success": true, "id": payload.ID})
+	JSON(w, http.StatusCreated, map[string]any{"success": true, "id": payload.ID, "resolvedUrl": payload.Feed.URL})
 }
 
 func HandleGetFeed(w http.ResponseWriter, r *http.Request) {
@@ -152,12 +155,32 @@ func HandleUpdateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Automatically resolve @handle URLs to canonical /channel/UC... URLs for Podsync compatibility
+	payload.Feed.URL = episodes.ResolveYouTubeChannelURL(r.Context(), payload.Feed.URL)
+
 	if err := config.UpsertFeed(id, payload.Feed); err != nil {
 		JSONError(w, http.StatusInternalServerError, "Failed to update feed: "+err.Error())
 		return
 	}
 
-	JSON(w, http.StatusOK, map[string]any{"success": true, "id": id})
+	JSON(w, http.StatusOK, map[string]any{"success": true, "id": id, "resolvedUrl": payload.Feed.URL})
+}
+
+func HandleResolveFeedURL(w http.ResponseWriter, r *http.Request) {
+	var payload struct {
+		URL string `json:"url"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil || strings.TrimSpace(payload.URL) == "" {
+		JSONError(w, http.StatusBadRequest, "URL is required")
+		return
+	}
+
+	resolved := episodes.ResolveYouTubeChannelURL(r.Context(), payload.URL)
+	JSON(w, http.StatusOK, map[string]any{
+		"original": payload.URL,
+		"resolved": resolved,
+		"changed":  payload.URL != resolved,
+	})
 }
 
 func HandleDeleteFeed(w http.ResponseWriter, r *http.Request) {
@@ -199,4 +222,21 @@ func HandleGetFeedEpisodes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	JSON(w, http.StatusOK, res)
+}
+
+func HandlePreviewFeed(w http.ResponseWriter, r *http.Request) {
+	var payload episodes.PreviewRequest
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil || strings.TrimSpace(payload.URL) == "" {
+		JSONError(w, http.StatusBadRequest, "URL is required")
+		return
+	}
+
+	payload.URL = episodes.ResolveYouTubeChannelURL(r.Context(), payload.URL)
+
+	result, err := episodes.PreviewFeed(r.Context(), payload)
+	if err != nil {
+		JSONError(w, http.StatusInternalServerError, "에피소드 미리보기 조회 실패: "+err.Error())
+		return
+	}
+	JSON(w, http.StatusOK, result)
 }
