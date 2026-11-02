@@ -85,7 +85,14 @@ export default {
     feedCountSingle: '{count} flux',
     feedCountPlural: '{count} flux',
     episodeCountSingle: '{count} épisode',
-    episodeCountPlural: '{count} épisodes'
+    episodeCountPlural: '{count} épisodes',
+    searchPlaceholder: 'Rechercher par titre, ID ou URL...',
+    sortBy: 'Trier',
+    sortNameAsc: 'Nom (A–Z)',
+    sortNameDesc: 'Nom (Z–A)',
+    sortEpisodesDesc: 'Plus d’épisodes',
+    noMatchingFeeds: 'Aucun flux ne correspond à votre recherche.',
+    clearSearch: 'Effacer la recherche'
   },
   // Schedule / Countdown
   schedule: {
@@ -166,6 +173,7 @@ export default {
     editSubtitle: 'Modifier la configuration du flux',
     cancel: 'Annuler',
     saveFeed: 'Enregistrer le flux',
+    submitNew: 'Enregistrer le flux',
     saveChanges: 'Enregistrer les modifications',
     saving: 'Enregistrement...',
     updating: 'Mise à jour...',
@@ -199,9 +207,12 @@ export default {
     opmlIncludeLabel: 'Inclure ce flux dans l’exportation OPML (pour abonnement groupé)',
     cleanupSection: 'Règles de Conservation et Filtrage (Optimisation de l’espace)',
     cleanupSectionDesc: 'Supprime automatiquement les anciens épisodes et ignore les vidéos courtes (Shorts).',
+    cleanKeepLast: 'Garder les derniers',
     keepLastLabel: 'Épisodes à conserver (clean.keep_last)',
     customKeepLastPlaceholder: 'Nombre à conserver (ex : 7)',
     keepLastHelp: 'Les épisodes dépassant ce quota seront automatiquement purgés du stockage.',
+    filterMinDuration: 'Durée min.',
+    filterMaxDuration: 'Durée max.',
     minDurationLabel: 'Durée minimale (filters.min_duration)',
     customMinDurationPlaceholder: 'Secondes (ex : 120)',
     minDurationHelp: 'Les vidéos plus courtes que cette durée seront automatiquement ignorées.',

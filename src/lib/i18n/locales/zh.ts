@@ -85,7 +85,14 @@ export default {
     feedCountSingle: '{count} 个播客',
     feedCountPlural: '{count} 个播客',
     episodeCountSingle: '{count} 个剧集',
-    episodeCountPlural: '{count} 个剧集'
+    episodeCountPlural: '{count} 个剧集',
+    searchPlaceholder: '搜索播客名称、ID 或 URL...',
+    sortBy: '排序',
+    sortNameAsc: '名称 (升序)',
+    sortNameDesc: '名称 (降序)',
+    sortEpisodesDesc: '剧集数量最多',
+    noMatchingFeeds: '没有找到匹配的播客。',
+    clearSearch: '清除搜索'
   },
   // Schedule / Countdown
   schedule: {
@@ -166,6 +173,7 @@ export default {
     editSubtitle: '修改播客配置',
     cancel: '取消',
     saveFeed: '保存播客',
+    submitNew: '保存播客',
     saveChanges: '保存更改',
     saving: '保存中...',
     updating: '更新中...',
@@ -199,9 +207,12 @@ export default {
     opmlIncludeLabel: '在 OPML 列表中包含此播客 (方便播客客户端批量导入)',
     cleanupSection: '保留与过滤规则 (节省存储)',
     cleanupSectionDesc: '自动删除旧文件并跳过短视频 (Shorts)，有效节省存储空间。',
+    cleanKeepLast: '保留集数',
     keepLastLabel: '保留最近剧集数 (clean.keep_last)',
     customKeepLastPlaceholder: '输入保留数量 (例如: 7)',
     keepLastHelp: '超过指定数量的旧文件将自动从存储空间中清理。',
+    filterMinDuration: '最短时长',
+    filterMaxDuration: '最长时长',
     minDurationLabel: '最短时长 (filters.min_duration)',
     customMinDurationPlaceholder: '以秒为单位 (例如: 120)',
     minDurationHelp: '短于指定时长的视频将自动从剧集中排除。',

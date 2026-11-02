@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Plus, Radio, ExternalLink, HardDrive, Copy, Check, Clock, Layers, Filter, Download } from '@lucide/svelte';
+  import { Plus, Radio, ExternalLink, HardDrive, Copy, Check, Clock, Layers, Filter, Download, Search, ArrowUpDown, X } from '@lucide/svelte';
   import YoutubeIcon from '$lib/components/YoutubeIcon.svelte';
   import RssIcon from '$lib/components/RssIcon.svelte';
   import { getNextSyncInfo } from '$lib/utils/schedule';
@@ -8,6 +8,47 @@
   import { copyToClipboard } from '$lib/utils/clipboard';
 
   let { data } = $props();
+
+  // 검색 및 정렬 상태
+  let searchQuery = $state('');
+  let sortBy = $state<'name_asc' | 'name_desc' | 'episodes_desc'>('name_asc');
+
+  let processedFeeds = $derived(() => {
+    let list = [...(data.feeds || [])];
+
+    // 검색 필터링
+    const q = searchQuery.trim().toLowerCase();
+    if (q) {
+      list = list.filter((f) => {
+        const title = (f.title || '').toLowerCase();
+        const id = (f.id || '').toLowerCase();
+        const url = (f.url || '').toLowerCase();
+        return title.includes(q) || id.includes(q) || url.includes(q);
+      });
+    }
+
+    // 정렬
+    list.sort((a, b) => {
+      if (sortBy === 'name_asc') {
+        const nameA = a.title || a.id || '';
+        const nameB = b.title || b.id || '';
+        return nameA.localeCompare(nameB, undefined, { sensitivity: 'base', numeric: true });
+      }
+      if (sortBy === 'name_desc') {
+        const nameA = a.title || a.id || '';
+        const nameB = b.title || b.id || '';
+        return nameB.localeCompare(nameA, undefined, { sensitivity: 'base', numeric: true });
+      }
+      if (sortBy === 'episodes_desc') {
+        const countA = a.episodeCount ?? 0;
+        const countB = b.episodeCount ?? 0;
+        return countB - countA;
+      }
+      return 0;
+    });
+
+    return list;
+  });
 
   // 실시간 남은 시간 갱신용 틱
   let tick = $state(Date.now());
@@ -183,6 +224,46 @@
     </div>
   </div>
 
+  <!-- 검색 및 정렬 툴바 -->
+  {#if data.feeds.length > 0}
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-2xl border border-slate-800/80 backdrop-blur">
+      <!-- 검색 입력창 -->
+      <div class="relative flex-1 max-w-md">
+        <Search class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <input
+          type="text"
+          bind:value={searchQuery}
+          placeholder={t('home.searchPlaceholder')}
+          class="w-full pl-9 pr-9 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+        />
+        {#if searchQuery}
+          <button
+            type="button"
+            onclick={() => (searchQuery = '')}
+            class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-500 hover:text-slate-300 transition-colors"
+            title={t('home.clearSearch')}
+          >
+            <X class="w-3.5 h-3.5" />
+          </button>
+        {/if}
+      </div>
+
+      <!-- 정렬 드롭다운 -->
+      <div class="flex items-center gap-2 shrink-0">
+        <ArrowUpDown class="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        <span class="text-xs text-slate-400 font-medium shrink-0">{t('home.sortBy')}:</span>
+        <select
+          bind:value={sortBy}
+          class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
+        >
+          <option value="name_asc">{t('home.sortNameAsc')}</option>
+          <option value="name_desc">{t('home.sortNameDesc')}</option>
+          <option value="episodes_desc">{t('home.sortEpisodesDesc')}</option>
+        </select>
+      </div>
+    </div>
+  {/if}
+
   <!-- 피드 카드 그리드 -->
   {#if data.feeds.length === 0}
     <div class="text-center py-16 bg-slate-900/40 border border-slate-800 rounded-2xl">
@@ -190,9 +271,21 @@
       <h3 class="text-base font-semibold text-slate-300">{t('home.noFeedsTitle')}</h3>
       <p class="text-sm text-slate-500 mt-1">{t('home.noFeedsDesc')}</p>
     </div>
+  {:else if processedFeeds().length === 0}
+    <div class="text-center py-16 bg-slate-900/40 border border-slate-800 rounded-2xl">
+      <Search class="w-10 h-10 text-slate-600 mx-auto mb-3" />
+      <h3 class="text-base font-semibold text-slate-300">{t('home.noMatchingFeeds')}</h3>
+      <button
+        type="button"
+        onclick={() => (searchQuery = '')}
+        class="mt-3 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-400 border border-slate-700 transition-colors cursor-pointer"
+      >
+        {t('home.clearSearch')}
+      </button>
+    </div>
   {:else}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {#each data.feeds as feed}
+      {#each processedFeeds() as feed (feed.id)}
         {@const syncInfo = getNextSyncInfo(feed.update_period, feed.cron_schedule, data.uptime, tick, i18n.locale)}
         <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-slate-700 transition-all shadow-sm">
           <div>
@@ -277,7 +370,13 @@
               {#if feed.filters?.min_duration}
                 <div class="flex items-center gap-1.5">
                   <Filter class="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                  <span>Min: <strong class="text-slate-300">{feed.filters.min_duration}s</strong></span>
+                  <span>{t('feedForm.filterMinDuration')}: <strong class="text-slate-300">{feed.filters.min_duration}s</strong></span>
+                </div>
+              {/if}
+              {#if feed.filters?.max_duration}
+                <div class="flex items-center gap-1.5">
+                  <Filter class="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                  <span>{t('feedForm.filterMaxDuration')}: <strong class="text-slate-300">{feed.filters.max_duration}s</strong></span>
                 </div>
               {/if}
             </div>

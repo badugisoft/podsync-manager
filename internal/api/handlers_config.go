@@ -42,7 +42,7 @@ func HandleSaveConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	JSON(w, http.StatusOK, map[string]any{"success": true})
+	JSON(w, http.StatusOK, map[string]any{"success": true, "ok": true})
 }
 
 type RawTomlPayload struct {
@@ -77,7 +77,7 @@ func HandleSaveRawToml(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	JSON(w, http.StatusOK, map[string]any{"success": true})
+	JSON(w, http.StatusOK, map[string]any{"success": true, "ok": true})
 }
 
 type DiffResponse struct {
@@ -113,5 +113,50 @@ func HandleRollback(w http.ResponseWriter, r *http.Request) {
 		JSONError(w, http.StatusBadRequest, "Rollback failed or no backup available")
 		return
 	}
-	JSON(w, http.StatusOK, map[string]any{"success": true})
+	JSON(w, http.StatusOK, map[string]any{"success": true, "ok": true})
+}
+
+type PreviewTomlPayload struct {
+	FeedID string                `json:"feedId,omitempty"`
+	Feed   *config.FeedConfig    `json:"feed,omitempty"`
+	Config *config.PodsyncConfig `json:"config,omitempty"`
+}
+
+func HandlePreviewToml(w http.ResponseWriter, r *http.Request) {
+	var payload PreviewTomlPayload
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		JSONError(w, http.StatusBadRequest, "Invalid JSON: "+err.Error())
+		return
+	}
+
+	if payload.Feed != nil {
+		feedID := payload.FeedID
+		if feedID == "" {
+			feedID = "feed_id"
+		}
+		wrapper := map[string]any{
+			"feeds": map[string]any{
+				feedID: payload.Feed,
+			},
+		}
+		b, err := toml.Marshal(wrapper)
+		if err != nil {
+			JSONError(w, http.StatusInternalServerError, "Failed to marshal TOML: "+err.Error())
+			return
+		}
+		JSON(w, http.StatusOK, map[string]any{"ok": true, "toml": string(b)})
+		return
+	}
+
+	if payload.Config != nil {
+		b, err := toml.Marshal(payload.Config)
+		if err != nil {
+			JSONError(w, http.StatusInternalServerError, "Failed to marshal TOML: "+err.Error())
+			return
+		}
+		JSON(w, http.StatusOK, map[string]any{"ok": true, "toml": string(b)})
+		return
+	}
+
+	JSONError(w, http.StatusBadRequest, "Either feed or config must be provided")
 }

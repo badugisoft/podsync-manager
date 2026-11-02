@@ -85,7 +85,14 @@ export default {
     feedCountSingle: '{count}件のフィード',
     feedCountPlural: '{count}件のフィード',
     episodeCountSingle: '{count}件のエピソード',
-    episodeCountPlural: '{count}件のエピソード'
+    episodeCountPlural: '{count}件のエピソード',
+    searchPlaceholder: 'フィード名、ID、URLで検索...',
+    sortBy: '並び替え',
+    sortNameAsc: '名前順 (昇順)',
+    sortNameDesc: '名前順 (降順)',
+    sortEpisodesDesc: 'エピソード数順',
+    noMatchingFeeds: '一致するフィードがありません。',
+    clearSearch: '検索をクリア'
   },
   // Schedule / Countdown
   schedule: {
@@ -166,6 +173,7 @@ export default {
     editSubtitle: 'フィード設定編集',
     cancel: 'キャンセル',
     saveFeed: 'フィードを保存',
+    submitNew: 'フィードを保存',
     saveChanges: '変更を保存',
     saving: '保存中...',
     updating: '更新中...',
@@ -199,9 +207,12 @@ export default {
     opmlIncludeLabel: 'OPML一覧にこのフィードを含める (一括購読エクスポート)',
     cleanupSection: '保持およびフィルター設定 (容量節約)',
     cleanupSectionDesc: 'ストレージ容量を節約するため、古いファイルを自動削除し短い動画 (Shorts) を除外します。',
+    cleanKeepLast: '最新保持',
     keepLastLabel: '最新エピソード保持数 (clean.keep_last)',
     customKeepLastPlaceholder: '保持する件数を入力 (例: 7)',
     keepLastHelp: '指定した件数を超える古いエピソードはストレージから自動削除されます。',
+    filterMinDuration: '最小時間',
+    filterMaxDuration: '最大時間',
     minDurationLabel: '最小再生時間 (filters.min_duration)',
     customMinDurationPlaceholder: '秒単位で入力 (例: 120)',
     minDurationHelp: '指定した時間より短い動画はエピソードから自動除外されます。',

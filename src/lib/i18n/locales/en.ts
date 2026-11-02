@@ -85,7 +85,14 @@ export default {
     feedCountSingle: '{count} feed',
     feedCountPlural: '{count} feeds',
     episodeCountSingle: '{count} episode',
-    episodeCountPlural: '{count} episodes'
+    episodeCountPlural: '{count} episodes',
+    searchPlaceholder: 'Search feeds by title, ID, or URL...',
+    sortBy: 'Sort',
+    sortNameAsc: 'Name (A–Z)',
+    sortNameDesc: 'Name (Z–A)',
+    sortEpisodesDesc: 'Most Episodes',
+    noMatchingFeeds: 'No feeds matching your search.',
+    clearSearch: 'Clear Search'
   },
   // Schedule / Countdown
   schedule: {
@@ -166,6 +173,7 @@ export default {
     editSubtitle: 'Edit Feed Settings',
     cancel: 'Cancel',
     saveFeed: 'Save Feed',
+    submitNew: 'Save Feed',
     saveChanges: 'Save Changes',
     saving: 'Saving...',
     updating: 'Updating...',
@@ -199,9 +207,12 @@ export default {
     opmlIncludeLabel: 'Include this feed in OPML export (for bulk podcast subscription)',
     cleanupSection: 'Retention & Filter Rules (Storage Optimization)',
     cleanupSectionDesc: 'Auto-delete old episodes and skip short clips (Shorts) to conserve storage.',
+    cleanKeepLast: 'Keep Last',
     keepLastLabel: 'Episodes to Retain (clean.keep_last)',
     customKeepLastPlaceholder: 'Number of episodes (e.g. 7)',
     keepLastHelp: 'Episodes exceeding this count will be automatically purged from storage.',
+    filterMinDuration: 'Min Duration',
+    filterMaxDuration: 'Max Duration',
     minDurationLabel: 'Minimum Duration (filters.min_duration)',
     customMinDurationPlaceholder: 'Seconds (e.g. 120)',
     minDurationHelp: 'Videos shorter than this duration are automatically skipped.',

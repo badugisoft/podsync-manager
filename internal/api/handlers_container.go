@@ -22,7 +22,7 @@ func HandleRestartContainer(w http.ResponseWriter, r *http.Request) {
 		JSONError(w, http.StatusInternalServerError, "Failed to restart container: "+err.Error())
 		return
 	}
-	JSON(w, http.StatusOK, map[string]any{"success": true})
+	JSON(w, http.StatusOK, map[string]any{"success": true, "ok": true})
 }
 
 func HandleContainerLogs(w http.ResponseWriter, r *http.Request) {

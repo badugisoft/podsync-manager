@@ -110,7 +110,7 @@
         class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors disabled:opacity-50"
       >
         <Save class="w-4 h-4" />
-        <span>{saving ? t('feedForm.saving') : t('feedForm.submitNew')}</span>
+        <span>{saving ? t('feedForm.saving') : t('feedForm.saveFeed')}</span>
       </button>
     </div>
   </form>

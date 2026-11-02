@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 
@@ -46,6 +47,7 @@ func HandleListFeeds(w http.ResponseWriter, r *http.Request) {
 		for k := range cfg.Feeds {
 			keys = append(keys, k)
 		}
+		sort.Strings(keys)
 
 		for i, id := range keys {
 			wg.Add(1)

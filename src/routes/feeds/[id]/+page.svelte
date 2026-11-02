@@ -34,12 +34,25 @@
     }
   }
 
-  function feedToml() {
-    try {
-      return stringify({ feeds: { [data.feedId]: data.feed } });
-    } catch {
-      return '';
+  let serverFeedToml = $state('');
+
+  $effect(() => {
+    if (data.feedId && data.feed) {
+      fetch('/api/config/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feedId: data.feedId, feed: data.feed })
+      })
+        .then((res) => res.json())
+        .then((resData) => {
+          if (resData.toml) serverFeedToml = resData.toml;
+        })
+        .catch(() => {});
     }
+  });
+
+  function feedToml() {
+    return serverFeedToml || stringify({ feeds: { [data.feedId]: data.feed } });
   }
 
   async function copyFeedToml(e?: Event) {

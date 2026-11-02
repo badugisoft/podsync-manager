@@ -189,7 +189,7 @@
     try {
       const res = await fetch('/api/config/rollback', { method: 'POST' });
       const result = await res.json();
-      if (result.ok) {
+      if (res.ok && (result.ok || result.success)) {
         alert(t('settings.rollbackSuccess'));
         window.location.reload();
       } else {
@@ -203,84 +203,117 @@
     }
   }
 
+  let serverTomlPreview = $state('');
+  let previewDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function buildCurrentConfig(): Record<string, unknown> {
+    const cloned = JSON.parse(JSON.stringify(data.config));
+    cloned.server = {
+      ...cloned.server,
+      hostname: serverHostname,
+      port: Number(serverPort) || 8080
+    };
+    if (serverPath.trim()) cloned.server.path = serverPath.trim(); else delete cloned.server.path;
+    if (serverDataDir.trim()) cloned.server.data_dir = serverDataDir.trim(); else delete cloned.server.data_dir;
+
+    // Database
+    if (databaseDir.trim()) {
+      cloned.database = { dir: databaseDir.trim() };
+    } else {
+      delete cloned.database;
+    }
+
+    // Tokens
+    const tObj: Record<string, string> = {};
+    if (youtubeToken.trim()) tObj.youtube = youtubeToken.trim();
+    if (vimeoToken.trim()) tObj.vimeo = vimeoToken.trim();
+    if (soundcloudToken.trim()) tObj.soundcloud = soundcloudToken.trim();
+    if (twitchToken.trim()) tObj.twitch = twitchToken.trim();
+    if (Object.keys(tObj).length > 0) {
+      cloned.tokens = tObj;
+    } else {
+      delete cloned.tokens;
+    }
+
+    // Cleanup
+    if (finalCleanup) {
+      cloned.cleanup = { ...cloned.cleanup, keep_last: Number(finalCleanup) };
+    } else {
+      delete cloned.cleanup;
+    }
+
+    // Storage
+    if (storageType === 'local') {
+      cloned.storage = { type: 'local' };
+    } else {
+      const s3Obj: Record<string, unknown> = {};
+      if (s3Bucket.trim()) s3Obj.bucket = s3Bucket.trim();
+      if (s3Region.trim()) s3Obj.region = s3Region.trim();
+      if (s3Endpoint.trim()) s3Obj.endpoint_url = s3Endpoint.trim();
+      if (s3Prefix.trim()) s3Obj.prefix = s3Prefix.trim();
+      if (forcePathStyle) s3Obj.force_path_style = true;
+
+      cloned.storage = {
+        type: 's3',
+        ...(Object.keys(s3Obj).length > 0 ? { s3: s3Obj } : {})
+      };
+    }
+
+    // Downloader
+    const dlObj: Record<string, unknown> = {};
+    if (downloaderSelfUpdate) dlObj.self_update = true;
+    if (downloaderTimeout.trim()) dlObj.timeout = Number(downloaderTimeout.trim());
+    if (Object.keys(dlObj).length > 0) {
+      cloned.downloader = dlObj;
+    } else {
+      delete cloned.downloader;
+    }
+
+    // Log
+    const lObj: Record<string, unknown> = {};
+    if (logFilename.trim()) lObj.filename = logFilename.trim();
+    if (logMaxSize.trim()) lObj.max_size = Number(logMaxSize.trim());
+    if (logMaxAge.trim()) lObj.max_age = Number(logMaxAge.trim());
+    if (logMaxBackups.trim()) lObj.max_backups = Number(logMaxBackups.trim());
+    if (logCompress) lObj.compress = true;
+    if (Object.keys(lObj).length > 0) {
+      cloned.log = lObj;
+    } else {
+      delete cloned.log;
+    }
+
+    return cloned;
+  }
+
+  $effect(() => {
+    const cfg = buildCurrentConfig();
+    if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
+    previewDebounceTimer = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/config/preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ config: cfg })
+        });
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData.toml) {
+            serverTomlPreview = resData.toml;
+          }
+        }
+      } catch {}
+    }, 120);
+
+    return () => {
+      if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
+    };
+  });
+
   // 실시간 live TOML 계산
   let liveToml = $derived(() => {
+    if (serverTomlPreview) return serverTomlPreview;
     try {
-      const cloned = JSON.parse(JSON.stringify(data.config));
-      cloned.server = {
-        ...cloned.server,
-        hostname: serverHostname,
-        port: Number(serverPort) || 8080
-      };
-      if (serverPath.trim()) cloned.server.path = serverPath.trim(); else delete cloned.server.path;
-      if (serverDataDir.trim()) cloned.server.data_dir = serverDataDir.trim(); else delete cloned.server.data_dir;
-
-      // Database
-      if (databaseDir.trim()) {
-        cloned.database = { dir: databaseDir.trim() };
-      } else {
-        delete cloned.database;
-      }
-
-      // Tokens
-      const tObj: Record<string, string> = {};
-      if (youtubeToken.trim()) tObj.youtube = youtubeToken.trim();
-      if (vimeoToken.trim()) tObj.vimeo = vimeoToken.trim();
-      if (soundcloudToken.trim()) tObj.soundcloud = soundcloudToken.trim();
-      if (twitchToken.trim()) tObj.twitch = twitchToken.trim();
-      if (Object.keys(tObj).length > 0) {
-        cloned.tokens = tObj;
-      } else {
-        delete cloned.tokens;
-      }
-
-      // Cleanup
-      if (finalCleanup) {
-        cloned.cleanup = { ...cloned.cleanup, keep_last: Number(finalCleanup) };
-      } else {
-        delete cloned.cleanup;
-      }
-
-      // Storage
-      if (storageType === 'local') {
-        cloned.storage = { type: 'local' };
-      } else {
-        const s3Obj: Record<string, unknown> = {};
-        if (s3Bucket.trim()) s3Obj.bucket = s3Bucket.trim();
-        if (s3Region.trim()) s3Obj.region = s3Region.trim();
-        if (s3Endpoint.trim()) s3Obj.endpoint_url = s3Endpoint.trim();
-        if (s3Prefix.trim()) s3Obj.prefix = s3Prefix.trim();
-        if (forcePathStyle) s3Obj.force_path_style = true;
-
-        cloned.storage = {
-          type: 's3',
-          ...(Object.keys(s3Obj).length > 0 ? { s3: s3Obj } : {})
-        };
-      }
-
-      // Downloader
-      const dlObj: Record<string, unknown> = {};
-      if (downloaderSelfUpdate) dlObj.self_update = true;
-      if (downloaderTimeout.trim()) dlObj.timeout = Number(downloaderTimeout.trim());
-      if (Object.keys(dlObj).length > 0) {
-        cloned.downloader = dlObj;
-      } else {
-        delete cloned.downloader;
-      }
-
-      // Log
-      const lObj: Record<string, unknown> = {};
-      if (logFilename.trim()) lObj.filename = logFilename.trim();
-      if (logMaxSize.trim()) lObj.max_size = Number(logMaxSize.trim());
-      if (logMaxAge.trim()) lObj.max_age = Number(logMaxAge.trim());
-      if (logMaxBackups.trim()) lObj.max_backups = Number(logMaxBackups.trim());
-      if (logCompress) lObj.compress = true;
-      if (Object.keys(lObj).length > 0) {
-        cloned.log = lObj;
-      } else {
-        delete cloned.log;
-      }
-
+      const cloned = buildCurrentConfig();
       return stringify(cloned);
     } catch {
       return data.rawToml;

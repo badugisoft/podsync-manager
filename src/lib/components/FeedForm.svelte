@@ -525,9 +525,10 @@
   });
 
   let copiedFeedToml = $state(false);
+  let serverTomlPreview = $state('');
+  let previewDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-  // 실시간 피드 TOML 스니펫 계산
-  let liveFeedToml = $derived(() => {
+  function buildCurrentFeedPayload(): { fId: string; fObj: Record<string, unknown> } {
     const fId = feedId.trim() || (feed ? 'feed' : 'my_feed');
     const fObj: Record<string, unknown> = {
       url: url || 'https://www.youtube.com/...',
@@ -583,7 +584,38 @@
       }
     }
 
+    return { fId, fObj };
+  }
+
+  $effect(() => {
+    const { fId, fObj } = buildCurrentFeedPayload();
+    if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
+    previewDebounceTimer = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/config/preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ feedId: fId, feed: fObj })
+        });
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData.toml) {
+            serverTomlPreview = resData.toml;
+          }
+        }
+      } catch {}
+    }, 120);
+
+    return () => {
+      if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
+    };
+  });
+
+  // 실시간 피드 TOML 스니펫 계산
+  let liveFeedToml = $derived(() => {
+    if (serverTomlPreview) return serverTomlPreview;
     try {
+      const { fId, fObj } = buildCurrentFeedPayload();
       return stringify({ feeds: { [fId]: fObj } });
     } catch {
       return '';

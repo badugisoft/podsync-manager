@@ -65,7 +65,7 @@
         body: JSON.stringify({ rawToml: editableToml })
       });
       const result = await res.json();
-      if (result.ok) {
+      if (res.ok && (result.ok || result.success)) {
         editSuccess = true;
         await loadDiff();
         setTimeout(() => {
@@ -90,7 +90,7 @@
     try {
       const res = await fetch('/api/container/restart', { method: 'POST' });
       const result = await res.json();
-      if (result.ok) {
+      if (res.ok && (result.ok || result.success)) {
         onRestartComplete();
       } else {
         errorMessage = result.error || t('nav.restartFailed');

@@ -85,7 +85,14 @@ export default {
     feedCountSingle: '{count}개 피드',
     feedCountPlural: '{count}개 피드',
     episodeCountSingle: '{count}개 에피소드',
-    episodeCountPlural: '{count}개 에피소드'
+    episodeCountPlural: '{count}개 에피소드',
+    searchPlaceholder: '피드 이름, ID 또는 URL 검색...',
+    sortBy: '정렬',
+    sortNameAsc: '이름순 (A–Z)',
+    sortNameDesc: '이름순 (Z–A)',
+    sortEpisodesDesc: '에피소드 많은 순',
+    noMatchingFeeds: '검색 조건과 일치하는 피드가 없습니다.',
+    clearSearch: '검색 초기화'
   },
   // Schedule / Countdown
   schedule: {
@@ -166,6 +173,7 @@ export default {
     editSubtitle: '피드 설정 수정',
     cancel: '취소',
     saveFeed: '피드 저장',
+    submitNew: '피드 저장',
     saveChanges: '변경사항 저장',
     saving: '저장 중...',
     updating: '수정 중...',
@@ -199,9 +207,12 @@ export default {
     opmlIncludeLabel: 'OPML 목록에 이 피드 포함 (팟캐스트 앱 일괄 구독 시 포함)',
     cleanupSection: '보관 및 필터 규칙 (용량 절약)',
     cleanupSectionDesc: '스토리지 용량을 절약하기 위해 오래된 파일 자동 삭제 및 짧은 영상(Shorts)을 제외합니다.',
+    cleanKeepLast: '최신 보관',
     keepLastLabel: '최신 에피소드 보관 개수 (clean.keep_last)',
     customKeepLastPlaceholder: '보관할 개수 입력 (예: 7)',
     keepLastHelp: '지정한 개수를 초과하는 오래된 파일은 스토리지에서 자동 삭제됩니다.',
+    filterMinDuration: '최소 시간',
+    filterMaxDuration: '최대 시간',
     minDurationLabel: '최소 재생 시간 (filters.min_duration)',
     customMinDurationPlaceholder: '초 단위 입력 (예: 120)',
     minDurationHelp: '지정한 시간보다 짧은 영상은 팟캐스트 에피소드에서 자동 제외됩니다.',

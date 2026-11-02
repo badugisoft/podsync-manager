@@ -85,7 +85,14 @@ export default {
     feedCountSingle: '{count} canal',
     feedCountPlural: '{count} canales',
     episodeCountSingle: '{count} episodio',
-    episodeCountPlural: '{count} episodios'
+    episodeCountPlural: '{count} episodios',
+    searchPlaceholder: 'Buscar por título, ID o URL...',
+    sortBy: 'Ordenar',
+    sortNameAsc: 'Nombre (A–Z)',
+    sortNameDesc: 'Nombre (Z–A)',
+    sortEpisodesDesc: 'Más episodios',
+    noMatchingFeeds: 'No se encontraron canales que coincidan.',
+    clearSearch: 'Limpiar búsqueda'
   },
   // Schedule / Countdown
   schedule: {
@@ -166,6 +173,7 @@ export default {
     editSubtitle: 'Editar configuración del canal',
     cancel: 'Cancelar',
     saveFeed: 'Guardar canal',
+    submitNew: 'Guardar canal',
     saveChanges: 'Guardar cambios',
     saving: 'Guardando...',
     updating: 'Actualizando...',
@@ -199,9 +207,12 @@ export default {
     opmlIncludeLabel: 'Incluir este canal en la lista OPML (para exportación masiva)',
     cleanupSection: 'Reglas de Retención y Filtrado (Ahorro de espacio)',
     cleanupSectionDesc: 'Elimina automáticamente episodios antiguos y omite videos cortos (Shorts).',
+    cleanKeepLast: 'Conservar',
     keepLastLabel: 'Episodios a conservar (clean.keep_last)',
     customKeepLastPlaceholder: 'Cantidad a conservar (ej: 7)',
     keepLastHelp: 'Los episodios antiguos que excedan este número se eliminarán automáticamente.',
+    filterMinDuration: 'Duración mín.',
+    filterMaxDuration: 'Duración máx.',
     minDurationLabel: 'Duración mínima (filters.min_duration)',
     customMinDurationPlaceholder: 'Segundos (ej: 120)',
     minDurationHelp: 'Los videos más cortos que esta duración se omitirán automáticamente.',

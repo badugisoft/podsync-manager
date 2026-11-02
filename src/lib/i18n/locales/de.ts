@@ -85,7 +85,14 @@ export default {
     feedCountSingle: '{count} Feed',
     feedCountPlural: '{count} Feeds',
     episodeCountSingle: '{count} Episode',
-    episodeCountPlural: '{count} Episoden'
+    episodeCountPlural: '{count} Episoden',
+    searchPlaceholder: 'Nach Titel, ID oder URL suchen...',
+    sortBy: 'Sortieren',
+    sortNameAsc: 'Name (A–Z)',
+    sortNameDesc: 'Name (Z–A)',
+    sortEpisodesDesc: 'Meiste Episoden',
+    noMatchingFeeds: 'Keine Feeds gefunden, die der Suche entsprechen.',
+    clearSearch: 'Suche zurücksetzen'
   },
   // Schedule / Countdown
   schedule: {
@@ -166,6 +173,7 @@ export default {
     editSubtitle: 'Feed-Konfiguration bearbeiten',
     cancel: 'Abbrechen',
     saveFeed: 'Feed speichern',
+    submitNew: 'Feed speichern',
     saveChanges: 'Änderungen speichern',
     saving: 'Wird gespeichert...',
     updating: 'Wird aktualisiert...',
@@ -199,9 +207,12 @@ export default {
     opmlIncludeLabel: 'Diesen Feed in OPML-Liste aufnehmen (für Massenexport)',
     cleanupSection: 'Bereinigungs- und Filterregeln (Speicherplatz sparen)',
     cleanupSectionDesc: 'Löscht ältere Episoden automatisch und filtert kurze Videos (Shorts) heraus.',
+    cleanKeepLast: 'Behalte letzte',
     keepLastLabel: 'Episoden behalten (clean.keep_last)',
     customKeepLastPlaceholder: 'Anzahl behalten (z. B. 7)',
     keepLastHelp: 'Ältere Episoden, die diese Anzahl überschreiten, werden automatisch entfernt.',
+    filterMinDuration: 'Mindestdauer',
+    filterMaxDuration: 'Höchstdauer',
     minDurationLabel: 'Mindestdauer (filters.min_duration)',
     customMinDurationPlaceholder: 'Sekunden (z. B. 120)',
     minDurationHelp: 'Kürzere Videos werden automatisch übersprungen.',

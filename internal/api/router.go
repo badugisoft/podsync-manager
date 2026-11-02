@@ -41,6 +41,7 @@ func NewRouter() *chi.Mux {
 			// Config
 			protected.Get("/config", HandleGetConfig)
 			protected.Put("/config", HandleSaveConfig)
+			protected.Post("/config/preview", HandlePreviewToml)
 			protected.Get("/config/raw", HandleGetRawToml)
 			protected.Post("/config/raw", HandleSaveRawToml)
 			protected.Get("/config/diff", HandleGetDiff)
