@@ -54,10 +54,11 @@ func ResolveYouTubeChannelURL(ctx context.Context, rawURL string) string {
 	cfg, _, _ := config.LoadConfig()
 	client := &http.Client{Timeout: 8 * time.Second}
 
-	// 1. Try YouTube Data API if token is configured
-	if cfg != nil && cfg.Tokens != nil && cfg.Tokens.YouTube != "" {
+	// 1. Try YouTube Data API if token is configured or present in environment
+	apiKey := config.GetYouTubeAPIKey(cfg)
+	if apiKey != "" {
 		apiURL := fmt.Sprintf("https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=%s&key=%s",
-			url.QueryEscape(handle), cfg.Tokens.YouTube)
+			url.QueryEscape(handle), apiKey)
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
 		if err == nil {
 			res, err := client.Do(req)

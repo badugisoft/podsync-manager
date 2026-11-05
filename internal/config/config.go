@@ -14,10 +14,7 @@ func GetConfigPath() string {
 	if p := os.Getenv("PODSYNC_CONFIG_PATH"); p != "" {
 		return p
 	}
-	if os.Getenv("NODE_ENV") == "production" || os.Getenv("ENV") == "production" {
-		return "/app/config/config.toml"
-	}
-	return "/Users/badugiss/work/badugiss/docker-mini26/services/podsync/config/config.toml"
+	return "config/config.toml"
 }
 
 func copyFile(src, dst string) error {
@@ -205,4 +202,44 @@ func DeleteFeed(id string) error {
 		delete(cfg.Feeds, id)
 	}
 	return SaveConfig(cfg)
+}
+
+// GetYouTubeAPIKey returns the YouTube API key from config.toml, or falls back to environment variables.
+func GetYouTubeAPIKey(cfg *PodsyncConfig) string {
+	if cfg != nil && cfg.Tokens != nil && cfg.Tokens.YouTube != "" {
+		return cfg.Tokens.YouTube
+	}
+	for _, k := range []string{"PODSYNC_YOUTUBE_API_KEY", "YOUTUBE_API_KEY", "YOUTUBE_KEY"} {
+		if v := os.Getenv(k); v != "" {
+			return v
+		}
+	}
+	return ""
+}
+
+// GetEnvTokens returns platform API keys configured via process environment variables.
+func GetEnvTokens() map[string]string {
+	tokens := make(map[string]string)
+	if yt := GetYouTubeAPIKey(nil); yt != "" {
+		tokens["youtube"] = yt
+	}
+	for _, k := range []string{"PODSYNC_VIMEO_API_KEY", "VIMEO_API_KEY"} {
+		if v := os.Getenv(k); v != "" {
+			tokens["vimeo"] = v
+			break
+		}
+	}
+	for _, k := range []string{"PODSYNC_SOUNDCLOUD_API_KEY", "SOUNDCLOUD_API_KEY"} {
+		if v := os.Getenv(k); v != "" {
+			tokens["soundcloud"] = v
+			break
+		}
+	}
+	for _, k := range []string{"PODSYNC_TWITCH_API_KEY", "TWITCH_API_KEY"} {
+		if v := os.Getenv(k); v != "" {
+			tokens["twitch"] = v
+			break
+		}
+	}
+	return tokens
 }

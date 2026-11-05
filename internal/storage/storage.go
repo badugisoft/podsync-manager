@@ -12,7 +12,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/badugisoft/podsync-manager/internal/config"
-	"github.com/badugisoft/podsync-manager/internal/docker"
 )
 
 type StorageUsage struct {
@@ -70,44 +69,34 @@ func CalculateStorageUsage(ctx context.Context) (*StorageUsage, error) {
 	}
 
 	// 2. S3 mode
-	containerEnv := docker.GetPodsyncEnv(ctx)
 	s3Config := cfg.Storage.S3
 
 	endpoint := os.Getenv("AWS_ENDPOINT")
 	if endpoint == "" && s3Config != nil {
 		endpoint = s3Config.EndpointURL
 	}
-	if endpoint == "" {
-		endpoint = containerEnv["AWS_ENDPOINT"]
-	}
 
 	accessKeyID := os.Getenv("AWS_ACCESS_KEY_ID")
 	if accessKeyID == "" {
-		accessKeyID = containerEnv["AWS_ACCESS_KEY_ID"]
-	}
-	if accessKeyID == "" {
-		accessKeyID = containerEnv["AWS_ACCESS_KEY"]
+		accessKeyID = os.Getenv("AWS_ACCESS_KEY")
 	}
 
 	secretAccessKey := os.Getenv("AWS_SECRET_ACCESS_KEY")
 	if secretAccessKey == "" {
-		secretAccessKey = containerEnv["AWS_SECRET_ACCESS_KEY"]
-	}
-	if secretAccessKey == "" {
-		secretAccessKey = containerEnv["AWS_SECRET_KEY"]
+		secretAccessKey = os.Getenv("AWS_SECRET_KEY")
 	}
 
 	bucket := "podsync-data"
 	if s3Config != nil && s3Config.Bucket != "" {
 		bucket = s3Config.Bucket
-	} else if b := containerEnv["AWS_BUCKET"]; b != "" {
+	} else if b := os.Getenv("AWS_BUCKET"); b != "" {
 		bucket = b
 	}
 
 	region := "auto"
 	if s3Config != nil && s3Config.Region != "" {
 		region = s3Config.Region
-	} else if r := containerEnv["AWS_REGION"]; r != "" {
+	} else if r := os.Getenv("AWS_REGION"); r != "" {
 		region = r
 	}
 

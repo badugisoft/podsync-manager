@@ -11,10 +11,13 @@ import (
 	"time"
 
 	"github.com/badugisoft/podsync-manager/internal/api"
+	"github.com/badugisoft/podsync-manager/internal/config"
 	"github.com/badugisoft/podsync-manager/internal/web"
 )
 
 func main() {
+	config.LoadDotEnv(".env")
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"

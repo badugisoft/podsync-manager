@@ -499,10 +499,7 @@ func PreviewFeed(ctx context.Context, req PreviewRequest) (*PreviewResult, error
 	isYouTube := strings.Contains(req.URL, "youtube.com") || strings.Contains(req.URL, "youtu.be")
 	if isYouTube {
 		cfg, _, _ := config.LoadConfig()
-		var apiKey string
-		if cfg != nil && cfg.Tokens != nil && cfg.Tokens.YouTube != "" {
-			apiKey = cfg.Tokens.YouTube
-		}
+		apiKey := config.GetYouTubeAPIKey(cfg)
 
 		if apiKey != "" {
 			title, items, err := fetchYouTubeViaAPI(ctx, apiKey, req.URL, limit)

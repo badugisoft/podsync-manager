@@ -13,6 +13,7 @@ type ConfigResponse struct {
 	RawToml   string                `json:"rawToml"`
 	HasBackup bool                  `json:"hasBackup"`
 	MTime     int64                 `json:"mtime"`
+	EnvTokens map[string]string     `json:"envTokens,omitempty"`
 }
 
 func HandleGetConfig(w http.ResponseWriter, r *http.Request) {
@@ -27,6 +28,7 @@ func HandleGetConfig(w http.ResponseWriter, r *http.Request) {
 		RawToml:   raw,
 		HasBackup: config.HasBackupConfig(),
 		MTime:     config.GetConfigMTime(),
+		EnvTokens: config.GetEnvTokens(),
 	})
 }
 

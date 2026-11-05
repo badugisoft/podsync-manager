@@ -9,7 +9,7 @@ export const load: PageLoad = async ({ fetch }) => {
     rawToml: data.rawToml || '',
     configPath: '',
     hasBackup: data.hasBackup || false,
-    envTokens: {
+    envTokens: data.envTokens || {
       youtube: '',
       vimeo: '',
       soundcloud: '',

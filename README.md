@@ -104,12 +104,14 @@ services:
       # Mount Docker socket for container control and log streaming
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - NODE_ENV=production
       - PODSYNC_CONFIG_PATH=/app/config/config.toml
       - PODSYNC_CONTAINER_NAME=podsync
+      - PODSYNC_YOUTUBE_API_KEY=your_youtube_api_key_here
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=your_secure_password
       - SESSION_SECRET=generate_a_random_secret_string
+      - AWS_ACCESS_KEY_ID=your_access_key_id
+      - AWS_SECRET_ACCESS_KEY=your_secret_access_key
 ```
 
 > [!TIP]
@@ -143,36 +145,39 @@ Access the dashboard at `http://localhost:3000`.
 
 | Variable | Description | Default |
 | :--- | :--- | :--- |
-| `PODSYNC_CONFIG_PATH` | Absolute path to Podsync's `config.toml` | `/app/config/config.toml` |
+| `PORT` | Web service port | `3000` |
+| `PODSYNC_CONFIG_PATH` | Path to Podsync's `config.toml` | `config/config.toml` (`/app/config/config.toml` in container) |
 | `PODSYNC_CONTAINER_NAME` | Name of the Podsync Docker container to manage | `podsync` |
+| `PODSYNC_YOUTUBE_API_KEY` | YouTube Data API v3 Key for episode preview and metadata lookup | `""` |
 | `DOCKER_SOCKET` | Path to Docker unix socket | `/var/run/docker.sock` |
 | `ADMIN_USERNAME` | Administrator username | `admin` |
 | `ADMIN_PASSWORD` | Administrator password | *(Recommended to set)* |
-| `SESSION_SECRET` | Secret key used to encrypt session cookies | `podsync-manager-default-secret` |
-| `PORT` | Web service port | `3000` |
-| `AWS_ACCESS_KEY_ID` | Optional override for S3 access key (auto-detected from container if omitted) | `""` |
-| `AWS_SECRET_ACCESS_KEY` | Optional override for S3 secret key (auto-detected from container if omitted) | `""` |
+| `SESSION_SECRET` | Secret key used to sign session cookies | *(Auto-generated if unset)* |
+| `AWS_ACCESS_KEY_ID` | S3 / Cloudflare R2 access key for storage calculation | `""` |
+| `AWS_SECRET_ACCESS_KEY` | S3 / Cloudflare R2 secret key for storage calculation | `""` |
 
 ---
 
 ## 🛠️ Local Development
 
+Podsync Manager runs as a lightweight Go single binary with an embedded Svelte 5 SPA. It also supports local `.env` files for development:
+
 ```bash
-# Clone repository
+# 1. Clone repository
 git clone https://github.com/badugisoft/podsync-manager.git
 cd podsync-manager
 
-# Install dependencies
+# 2. Configure local environment
+cp .env.example .env
+# Edit .env with your local settings (e.g. PODSYNC_CONFIG_PATH, PODSYNC_YOUTUBE_API_KEY)
+
+# 3. Install frontend dependencies and build static assets
 npm install
-
-# Start development server
-npm run dev
-
-# Type check & Svelte diagnostics
-npx svelte-check --tsconfig ./tsconfig.json
-
-# Build for production
 npm run build
+
+# 4. Build and run Go single binary
+go build -o podsync-manager ./cmd/server
+./podsync-manager
 ```
 
 ---

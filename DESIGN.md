@@ -80,8 +80,8 @@ This project was designed and built in collaboration with the **Google Antigravi
 ### 2.4. Cloud Storage & Media Streaming
 - **Vendor-Neutral Storage**:
   - Supports S3-compatible cloud providers (AWS S3, Cloudflare R2, MinIO) and container local directories (`/app/data`)
-- **Auto Container Credential Inheritance**:
-  - Dynamically extracts `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_ENDPOINT` from the running Podsync container if not explicitly configured in Manager
+- **Direct Environment & .env Credential Management**:
+  - Manages cloud storage keys (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ENDPOINT`) and YouTube API keys (`PODSYNC_YOUTUBE_API_KEY`) cleanly via standard environment variables and local `.env` loader without invasive container inspection
 - **Episode Streaming**:
   - Parses channel RSS feeds (`${server.hostname}/${feed_id}.xml`) utilizing CDN cache to minimize cloud storage API fees
   - In-browser HTML5 audio player with variable playback speed (1.0x–2.0x) and ±15s seek navigation

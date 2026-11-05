@@ -210,6 +210,7 @@
         }
       } else {
         minDurationMode = '';
+        customMinDuration = '';
       }
 
       // 최대 재생 시간
@@ -247,11 +248,14 @@
       // yt-dlp 인자 파싱
       const args = targetFeed.youtube_dl_args || [];
       const remaining: string[] = [];
-      langPref = 'ko';
-      playerClient = 'android';
-      excludeLive = true;
+      langPref = 'none';
+      customLang = '';
+      playerClient = 'none';
+      customClient = '';
+      excludeLive = false;
       shortsFilter = 'all';
-      formatStream = '18';
+      formatStream = 'default';
+      customFormatStream = '';
 
       for (let i = 0; i < args.length; i++) {
         const curr = args[i];
@@ -1326,10 +1330,10 @@
           bind:value={langPref}
           class="block w-full px-3.5 py-2.5 bg-slate-950 border {isModifiedLangPref ? 'border-amber-500/50 focus:ring-amber-500' : 'border-slate-700 focus:ring-indigo-500'} rounded-xl text-slate-100 focus:outline-none focus:ring-2 text-sm"
         >
+          <option value="none">{t('feedForm.langPrefNone')}</option>
           <option value="ko">{t('feedForm.langPrefKo')}</option>
           <option value="en">{t('feedForm.langPrefEn')}</option>
           <option value="ja">{t('feedForm.langPrefJa')}</option>
-          <option value="none">{t('feedForm.langPrefNone')}</option>
           <option value="custom">{t('feedForm.langPrefCustom')}</option>
         </select>
         {#if langPref === 'custom'}
@@ -1360,10 +1364,10 @@
           bind:value={playerClient}
           class="block w-full px-3.5 py-2.5 bg-slate-950 border {isModifiedPlayerClient ? 'border-amber-500/50 focus:ring-amber-500' : 'border-slate-700 focus:ring-indigo-500'} rounded-xl text-slate-100 focus:outline-none focus:ring-2 text-sm"
         >
+          <option value="none">{t('feedForm.clientNone')}</option>
           <option value="android">{t('feedForm.clientAndroid')}</option>
           <option value="ios">{t('feedForm.clientIos')}</option>
           <option value="web">{t('feedForm.clientWeb')}</option>
-          <option value="none">{t('feedForm.clientNone')}</option>
           <option value="custom">{t('feedForm.clientCustom')}</option>
         </select>
         {#if playerClient === 'custom'}
@@ -1394,9 +1398,9 @@
           bind:value={formatStream}
           class="block w-full px-3.5 py-2.5 bg-slate-950 border {isModifiedFormatStream ? 'border-amber-500/50 focus:ring-amber-500' : 'border-slate-700 focus:ring-indigo-500'} rounded-xl text-slate-100 focus:outline-none focus:ring-2 text-sm"
         >
+          <option value="default">{t('feedForm.formatStreamDefault')}</option>
           <option value="18">{t('feedForm.formatStream18')}</option>
           <option value="bestaudio">{t('feedForm.formatStreamBestAudio')}</option>
-          <option value="default">{t('feedForm.formatStreamDefault')}</option>
           <option value="custom">{t('feedForm.formatStreamCustom')}</option>
         </select>
         {#if formatStream === 'custom'}

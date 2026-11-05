@@ -39,3 +39,25 @@ For future Golang single-binary migration plans, refer to [GOLANG_MIGRATION_PLAN
 - **Prior Notification**: Always clearly state what action will be taken before creating, editing files, or running commands.
 - **Repository Modification Approval**: Never execute commits, pushes, or releases without explicit prior user confirmation.
 - **Concise Communication**: Keep answers brief, direct, and strictly focused on what the user asks.
+
+---
+
+## 4. Server Startup & Execution Protocol
+
+When launching or restarting the local development/runtime server, always follow these rules in order:
+
+1. **Pre-launch Port & Process Check**:
+   - Always check port 3000 (`lsof -i :3000`) before starting the server.
+   - If an old `podsync-manager` process is occupying port 3000, terminate it first. Never let the server silently fall back to port 3001.
+
+2. **Single-Binary Build Pipeline**:
+   - This project operates as a Go single binary with embedded Svelte 5 SPA (`internal/web/dist`).
+   - If frontend changes were made:
+     1. Build frontend: `npm run build`
+     2. Build Go server: `go build -o podsync-manager ./cmd/server`
+     3. Run binary: `./podsync-manager`
+   - Do not merely run `npm run dev` (Vite) alone, as backend `/api` endpoints will be absent and cause frontend communication errors.
+
+3. **Docker Socket Access Permission**:
+   - The server inspects the `podsync` container via Docker socket (`/var/run/docker.sock` / OrbStack socket).
+   - The server process must run with Docker socket access (sandbox bypass) to prevent `podsync: error` in container monitoring.

@@ -98,30 +98,6 @@ func GetPodsyncStatus(ctx context.Context) ContainerStatusInfo {
 	}
 }
 
-func GetPodsyncEnv(ctx context.Context) map[string]string {
-	envMap := make(map[string]string)
-	cli, err := NewDockerClient()
-	if err != nil {
-		return envMap
-	}
-	defer cli.Close()
-
-	inspect, err := cli.ContainerInspect(ctx, getContainerName())
-	if err != nil {
-		return envMap
-	}
-
-	if inspect.Config != nil {
-		for _, item := range inspect.Config.Env {
-			idx := strings.Index(item, "=")
-			if idx != -1 {
-				envMap[item[:idx]] = item[idx+1:]
-			}
-		}
-	}
-	return envMap
-}
-
 func RestartPodsync(ctx context.Context) error {
 	cli, err := NewDockerClient()
 	if err != nil {
