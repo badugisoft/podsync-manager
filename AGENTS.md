@@ -39,6 +39,7 @@ For future Golang single-binary migration plans, refer to [GOLANG_MIGRATION_PLAN
 - **Prior Notification**: Always clearly state what action will be taken before creating, editing files, or running commands.
 - **Repository Modification Approval**: Never execute commits, pushes, or releases without explicit prior user confirmation.
 - **Concise Communication**: Keep answers brief, direct, and strictly focused on what the user asks.
+- **Automatic Server Execution on Task Completion**: Whenever code or configuration changes are completed, always build and run/restart the test server following the `run-dev-server` skill workflow so the user can verify changes immediately at `http://localhost:3000/`.
 
 ---
 
