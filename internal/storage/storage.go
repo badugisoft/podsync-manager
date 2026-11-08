@@ -161,3 +161,150 @@ func CalculateStorageUsage(ctx context.Context) (*StorageUsage, error) {
 		StorageType:          "s3",
 	}, nil
 }
+
+// getS3ClientAndBucket returns initialized S3 client and target bucket name
+func getS3ClientAndBucket(ctx context.Context) (*s3.Client, string, error) {
+	cfg, _, err := config.LoadConfig()
+	if err != nil {
+		return nil, "", err
+	}
+	if cfg.Storage == nil || cfg.Storage.Type == "local" {
+		return nil, "", errors.New("not using S3 storage")
+	}
+
+	s3Config := cfg.Storage.S3
+	endpoint := os.Getenv("AWS_ENDPOINT")
+	if endpoint == "" && s3Config != nil {
+		endpoint = s3Config.EndpointURL
+	}
+
+	accessKeyID := os.Getenv("AWS_ACCESS_KEY_ID")
+	if accessKeyID == "" {
+		accessKeyID = os.Getenv("AWS_ACCESS_KEY")
+	}
+
+	secretAccessKey := os.Getenv("AWS_SECRET_ACCESS_KEY")
+	if secretAccessKey == "" {
+		secretAccessKey = os.Getenv("AWS_SECRET_KEY")
+	}
+
+	bucket := "podsync-data"
+	if s3Config != nil && s3Config.Bucket != "" {
+		bucket = s3Config.Bucket
+	} else if b := os.Getenv("AWS_BUCKET"); b != "" {
+		bucket = b
+	}
+
+	region := "auto"
+	if s3Config != nil && s3Config.Region != "" {
+		region = s3Config.Region
+	} else if r := os.Getenv("AWS_REGION"); r != "" {
+		region = r
+	}
+
+	if accessKeyID == "" || secretAccessKey == "" {
+		return nil, "", errors.New("ERR_S3_CREDENTIALS_MISSING")
+	}
+
+	creds := credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, "")
+	awsCfg, err := awsConfig.LoadDefaultConfig(ctx,
+		awsConfig.WithRegion(region),
+		awsConfig.WithCredentialsProvider(creds),
+	)
+	if err != nil {
+		return nil, "", err
+	}
+
+	s3Client := s3.NewFromConfig(awsCfg, func(o *s3.Options) {
+		if endpoint != "" {
+			o.BaseEndpoint = &endpoint
+		}
+		if s3Config != nil && s3Config.ForcePathStyle != nil {
+			o.UsePathStyle = *s3Config.ForcePathStyle
+		}
+	})
+
+	return s3Client, bucket, nil
+}
+
+// DeleteStorageFile deletes a single media file from storage (S3 or local disk).
+func DeleteStorageFile(ctx context.Context, key string) error {
+	cfg, _, err := config.LoadConfig()
+	if err != nil {
+		return err
+	}
+
+	if cfg.Storage != nil && cfg.Storage.Type == "local" {
+		localDir := "/app/data"
+		if cfg.Server != nil && cfg.Server.DataDir != "" {
+			localDir = cfg.Server.DataDir
+		}
+		filePath := filepath.Join(localDir, key)
+		_ = os.Remove(filePath)
+		return nil
+	}
+
+	client, bucket, err := getS3ClientAndBucket(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = client.DeleteObject(ctx, &s3.DeleteObjectInput{
+		Bucket: &bucket,
+		Key:    &key,
+	})
+	return err
+}
+
+// DeleteFeedStorageFiles deletes all media files under {feedId}/ from storage.
+func DeleteFeedStorageFiles(ctx context.Context, feedID string) error {
+	cfg, _, err := config.LoadConfig()
+	if err != nil {
+		return err
+	}
+
+	prefix := feedID + "/"
+
+	if cfg.Storage != nil && cfg.Storage.Type == "local" {
+		localDir := "/app/data"
+		if cfg.Server != nil && cfg.Server.DataDir != "" {
+			localDir = cfg.Server.DataDir
+		}
+		feedDir := filepath.Join(localDir, feedID)
+		_ = os.RemoveAll(feedDir)
+		return nil
+	}
+
+	client, bucket, err := getS3ClientAndBucket(ctx)
+	if err != nil {
+		return err
+	}
+
+	var continuationToken *string
+	for {
+		listOut, err := client.ListObjectsV2(ctx, &s3.ListObjectsV2Input{
+			Bucket:            &bucket,
+			Prefix:            &prefix,
+			ContinuationToken: continuationToken,
+		})
+		if err != nil {
+			return err
+		}
+
+		for _, item := range listOut.Contents {
+			if item.Key != nil {
+				_, _ = client.DeleteObject(ctx, &s3.DeleteObjectInput{
+					Bucket: &bucket,
+					Key:    item.Key,
+				})
+			}
+		}
+
+		if !*listOut.IsTruncated {
+			break
+		}
+		continuationToken = listOut.NextContinuationToken
+	}
+
+	return nil
+}

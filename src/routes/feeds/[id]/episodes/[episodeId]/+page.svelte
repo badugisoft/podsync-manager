@@ -1,11 +1,37 @@
 <script lang="ts">
-  import { ArrowLeft, Clock, HardDrive, Calendar, Music, ExternalLink, FastForward, Rewind, Radio } from '@lucide/svelte';
+  import { ArrowLeft, Clock, HardDrive, Calendar, Music, ExternalLink, FastForward, Rewind, Radio, RotateCcw } from '@lucide/svelte';
   import { t, i18n } from '$lib/i18n';
 
   let { data } = $props();
 
   let audioElement = $state<HTMLAudioElement | null>(null);
   let playbackRate = $state(1.0);
+  let redownloading = $state(false);
+
+  async function handleRedownload() {
+    if (!confirm(t('feedDetail.redownloadEpisodeConfirm'))) {
+      return;
+    }
+    redownloading = true;
+    try {
+      const ext = data.episode.audioUrl?.includes('.mp4') ? 'mp4' : 'mp3';
+      const res = await fetch(
+        `/api/feeds/${encodeURIComponent(data.feedId)}/episodes/${encodeURIComponent(data.episode.id)}/redownload?ext=${ext}`,
+        { method: 'POST' }
+      );
+      if (res.ok) {
+        alert(t('feedDetail.redownloadQueuedSuccess'));
+        window.location.href = `/feeds/${encodeURIComponent(data.feedId)}`;
+      } else {
+        const err = await res.json();
+        alert(err.error || '재다운로드 요청 실패');
+      }
+    } catch {
+      alert('서버와 통신할 수 없습니다.');
+    } finally {
+      redownloading = false;
+    }
+  }
 
   const rates = [1.0, 1.25, 1.5, 1.75, 2.0];
 
@@ -62,7 +88,7 @@
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
   <!-- 상단 뒤로가기 & 피드 브레드크럼 -->
-  <div class="flex items-center gap-3">
+  <div class="flex items-center justify-between">
     <a
       href="/feeds/{data.feedId}"
       class="inline-flex items-center gap-2 p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors text-sm"
@@ -70,6 +96,17 @@
       <ArrowLeft class="w-4 h-4" />
       <span>{t('episodeDetail.backToFeed', { title: data.channel?.title || data.feedId })}</span>
     </a>
+
+    <button
+      type="button"
+      disabled={redownloading}
+      onclick={handleRedownload}
+      class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition-colors disabled:opacity-50"
+      title={t('feedDetail.redownloadEpisode')}
+    >
+      <RotateCcw class="w-3.5 h-3.5 {redownloading ? 'animate-spin' : ''}" />
+      <span>{redownloading ? t('common.loading') : t('feedDetail.redownloadEpisode')}</span>
+    </button>
   </div>
 
   <!-- 플레이어 및 상세 카드 -->

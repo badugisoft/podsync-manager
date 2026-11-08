@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/badugisoft/podsync-manager/internal/docker"
+	"github.com/badugisoft/podsync-manager/internal/redownload"
 )
 
 func HandleContainerStatus(w http.ResponseWriter, r *http.Request) {
@@ -17,6 +19,12 @@ func HandleContainerStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleRestartContainer(w http.ResponseWriter, r *http.Request) {
+	// 1. 대기 중인 DB 키 삭제 실행
+	if err := redownload.ExecutePendingDeletions(r.Context()); err != nil {
+		log.Printf("[Restart] Warning: error executing pending DB deletions: %v", err)
+	}
+
+	// 2. 컨테이너 재시작
 	err := docker.RestartPodsync(r.Context())
 	if err != nil {
 		JSONError(w, http.StatusInternalServerError, "Failed to restart container: "+err.Error())

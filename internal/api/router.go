@@ -57,6 +57,9 @@ func NewRouter() *chi.Mux {
 			protected.Put("/feeds/{id}", HandleUpdateFeed)
 			protected.Delete("/feeds/{id}", HandleDeleteFeed)
 			protected.Get("/feeds/{id}/episodes", HandleGetFeedEpisodes)
+			protected.Post("/feeds/{id}/redownload", HandleRedownloadFeed)
+			protected.Post("/feeds/{id}/episodes/{episodeId}/redownload", HandleRedownloadEpisode)
+			protected.Get("/redownload/status", HandleGetRedownloadStatus)
 
 			// Container control
 			protected.Get("/container/status", HandleContainerStatus)

@@ -300,7 +300,22 @@
           i++;
         } else if (curr === '-f' && i + 1 < args.length) {
           const f = args[i + 1];
-          if (f === '18') {
+          const langMatch = f.match(/\[language=([a-zA-Z_-]+)\]/);
+          if (langMatch) {
+            const l = langMatch[1];
+            if (['ko', 'en', 'ja'].includes(l)) {
+              langPref = l;
+            } else {
+              langPref = 'custom';
+              customLang = l;
+            }
+            if (f.startsWith('worstaudio[language=') || f.startsWith('bestaudio[language=') || f.includes('+worstaudio[language=') || f.includes('+bestaudio[language=')) {
+              formatStream = 'default';
+            } else {
+              formatStream = 'custom';
+              customFormatStream = f;
+            }
+          } else if (f === '18') {
             formatStream = '18';
           } else if (f === 'ba' || f === 'ba/b' || f === 'bestaudio') {
             formatStream = 'bestaudio';
@@ -529,17 +544,14 @@
   // yt-dlp 인자 최종 조합
   let combinedYtArgs = $derived(() => {
     const lines: string[] = [];
-    // 1. 언어
     const selectedLang = langPref === 'custom' ? customLang : langPref;
-    if (selectedLang && selectedLang !== 'none') {
-      lines.push('-S', `lang:${selectedLang}`);
-    }
-    // 2. 플레이어 클라이언트
+
+    // 1. 플레이어 클라이언트
     const selectedClient = playerClient === 'custom' ? customClient : playerClient;
     if (selectedClient && selectedClient !== 'none') {
       lines.push('--extractor-args', `youtube:player-client=${selectedClient}`);
     }
-    // 3. 필터 조합 (--match-filter)
+    // 2. 필터 조합 (--match-filter)
     const matchFilters: string[] = [];
     if (excludeLive) {
       matchFilters.push('!is_live');
@@ -552,15 +564,30 @@
     if (matchFilters.length > 0) {
       lines.push('--match-filter', matchFilters.join(' & '));
     }
-    // 4. 스트림 포맷 최적화 (-f)
+    // 3. 스트림 포맷 최적화 및 언어 필터 (-f)
     if (formatStream === '18') {
       lines.push('-f', '18');
     } else if (formatStream === 'bestaudio') {
-      lines.push('-f', 'ba/b');
+      lines.push('-f', selectedLang && selectedLang !== 'none' ? `bestaudio[language=${selectedLang}]/bestaudio` : 'ba/b');
     } else if (formatStream === 'custom' && customFormatStream.trim()) {
       lines.push('-f', customFormatStream.trim());
+    } else if (selectedLang && selectedLang !== 'none') {
+      // formatStream === 'default' 이고 언어가 지정된 경우 언어 필터 스트림 적용
+      if (format === 'audio') {
+        if (quality === 'low') {
+          lines.push('-f', `worstaudio[language=${selectedLang}]/worstaudio`);
+        } else {
+          lines.push('-f', `bestaudio[language=${selectedLang}]/bestaudio`);
+        }
+      } else {
+        if (quality === 'low') {
+          lines.push('-f', `worstvideo[ext=mp4]+worstaudio[language=${selectedLang}]/worst`);
+        } else {
+          lines.push('-f', `bestvideo[ext=mp4]+bestaudio[language=${selectedLang}]/best`);
+        }
+      }
     }
-    // 5. 추가 인자
+    // 4. 추가 인자
     if (extraArgs.trim()) {
       for (const arg of extraArgs.split('\n')) {
         const trimmed = arg.trim();

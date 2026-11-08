@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ArrowLeft, Edit, Trash2, Radio, Clock, HardDrive, Play, Copy, Check, FileText, ExternalLink, Search, X } from '@lucide/svelte';
+  import { ArrowLeft, Edit, Trash2, Radio, Clock, HardDrive, Play, Copy, Check, FileText, ExternalLink, Search, X, RotateCcw } from '@lucide/svelte';
   import YoutubeIcon from '$lib/components/YoutubeIcon.svelte';
   import RssIcon from '$lib/components/RssIcon.svelte';
   import { stringify } from 'smol-toml';
@@ -10,10 +10,62 @@
   let { data } = $props();
 
   let deleting = $state(false);
+  let redownloadingFeed = $state(false);
+  let redownloadingEpisodeId = $state<string | null>(null);
   let copied = $state(false);
   let copiedToml = $state(false);
   let isDescExpanded = $state(false);
   let episodeSearch = $state('');
+
+  async function handleRedownloadFeed() {
+    if (!confirm(t('feedDetail.redownloadFeedConfirm', { id: data.feedId }))) {
+      return;
+    }
+    redownloadingFeed = true;
+    try {
+      const res = await fetch(`/api/feeds/${encodeURIComponent(data.feedId)}/redownload`, {
+        method: 'POST'
+      });
+      if (res.ok) {
+        alert(t('feedDetail.redownloadQueuedSuccess'));
+        window.location.reload();
+      } else {
+        const err = await res.json();
+        alert(err.error || '재다운로드 요청 실패');
+      }
+    } catch {
+      alert('서버와 통신할 수 없습니다.');
+    } finally {
+      redownloadingFeed = false;
+    }
+  }
+
+  async function handleRedownloadEpisode(epId: string, e: Event) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!confirm(t('feedDetail.redownloadEpisodeConfirm'))) {
+      return;
+    }
+    redownloadingEpisodeId = epId;
+    try {
+      const ext = data.feed?.format === 'video' ? 'mp4' : 'mp3';
+      const res = await fetch(
+        `/api/feeds/${encodeURIComponent(data.feedId)}/episodes/${encodeURIComponent(epId)}/redownload?ext=${ext}`,
+        { method: 'POST' }
+      );
+      if (res.ok) {
+        alert(t('feedDetail.redownloadQueuedSuccess'));
+        window.location.reload();
+      } else {
+        const err = await res.json();
+        alert(err.error || '재다운로드 요청 실패');
+      }
+    } catch {
+      alert('서버와 통신할 수 없습니다.');
+    } finally {
+      redownloadingEpisodeId = null;
+    }
+  }
 
   let syncInfo = $derived(
     getNextSyncInfo(data.feed.update_period, data.feed.cron_schedule, undefined, undefined, i18n.locale)
@@ -172,6 +224,16 @@
     </a>
 
     <div class="flex items-center gap-2">
+      <button
+        type="button"
+        disabled={redownloadingFeed}
+        onclick={handleRedownloadFeed}
+        class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition-colors disabled:opacity-50"
+        title={t('feedDetail.redownloadFeed')}
+      >
+        <RotateCcw class="w-3.5 h-3.5 {redownloadingFeed ? 'animate-spin' : ''}" />
+        <span>{redownloadingFeed ? t('common.loading') : t('feedDetail.redownloadFeed')}</span>
+      </button>
       <a
         href="/feeds/new?cloneFrom={data.feedId}"
         class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
@@ -394,12 +456,14 @@
       <!-- 에피소드 그리드 카드 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {#each filteredEpisodes() as ep}
-          <a
-            href="/feeds/{data.feedId}/episodes/{encodeURIComponent(ep.id)}"
-            class="bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 rounded-2xl p-4 flex gap-4 transition-all hover:bg-slate-800/40 group block"
+          <div
+            class="bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 rounded-2xl p-4 flex gap-4 transition-all hover:bg-slate-800/40 group"
           >
             <!-- 썸네일 (16:9 비율) -->
-            <div class="relative w-32 h-20 rounded-xl overflow-hidden bg-slate-950 shrink-0 border border-slate-800/80">
+            <a
+              href="/feeds/{data.feedId}/episodes/{encodeURIComponent(ep.id)}"
+              class="relative w-32 h-20 rounded-xl overflow-hidden bg-slate-950 shrink-0 border border-slate-800/80 block"
+            >
               {#if ep.thumbnail}
                 <img
                   src={ep.thumbnail}
@@ -416,35 +480,48 @@
               <div class="absolute bottom-1 right-1 p-1 rounded-md bg-slate-950/80 text-white">
                 <Play class="w-3 h-3 fill-current text-indigo-400" />
               </div>
-            </div>
+            </a>
 
             <!-- 제목 및 메타정보 -->
             <div class="flex-1 min-w-0 flex flex-col justify-between">
-              <div>
+              <a href="/feeds/{data.feedId}/episodes/{encodeURIComponent(ep.id)}" class="block">
                 <h4 class="text-sm font-semibold text-white group-hover:text-indigo-300 transition-colors line-clamp-2 leading-snug">
                   {ep.title}
                 </h4>
-              </div>
+              </a>
 
-              <div class="flex items-center gap-3 text-xs text-slate-400 mt-2 font-mono text-[11px]">
-                {#if ep.pubDate}
-                  <span>{formatLocaleDate(ep.pubDate)}</span>
-                {/if}
-                {#if ep.duration}
-                  <span class="flex items-center gap-1 text-slate-300">
-                    <Clock class="w-3 h-3 text-slate-500" />
-                    {ep.duration}
-                  </span>
-                {/if}
-                {#if ep.fileSize}
-                  <span class="flex items-center gap-1 text-slate-300">
-                    <HardDrive class="w-3 h-3 text-slate-500" />
-                    {ep.fileSize}
-                  </span>
-                {/if}
+              <div class="flex items-center justify-between gap-2 text-xs text-slate-400 mt-2 font-mono text-[11px]">
+                <div class="flex items-center gap-2.5 overflow-hidden">
+                  {#if ep.pubDate}
+                    <span class="truncate">{formatLocaleDate(ep.pubDate)}</span>
+                  {/if}
+                  {#if ep.duration}
+                    <span class="flex items-center gap-1 text-slate-300 shrink-0">
+                      <Clock class="w-3 h-3 text-slate-500" />
+                      {ep.duration}
+                    </span>
+                  {/if}
+                  {#if ep.fileSize}
+                    <span class="flex items-center gap-1 text-slate-300 shrink-0">
+                      <HardDrive class="w-3 h-3 text-slate-500" />
+                      {ep.fileSize}
+                    </span>
+                  {/if}
+                </div>
+
+                <button
+                  type="button"
+                  disabled={redownloadingEpisodeId === ep.id}
+                  onclick={(e) => handleRedownloadEpisode(ep.id, e)}
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-amber-500/20 text-slate-300 hover:text-amber-300 border border-slate-700/80 hover:border-amber-500/40 transition-colors shrink-0 text-[11px]"
+                  title={t('feedDetail.redownloadEpisode')}
+                >
+                  <RotateCcw class="w-3 h-3 {redownloadingEpisodeId === ep.id ? 'animate-spin' : ''}" />
+                  <span>{t('feedDetail.redownloadEpisode')}</span>
+                </button>
               </div>
             </div>
-          </a>
+          </div>
         {/each}
       </div>
     {/if}

@@ -10,6 +10,8 @@ import (
 
 	"github.com/badugisoft/podsync-manager/internal/config"
 	"github.com/badugisoft/podsync-manager/internal/episodes"
+	"github.com/badugisoft/podsync-manager/internal/redownload"
+	"github.com/badugisoft/podsync-manager/internal/storage"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -239,4 +241,58 @@ func HandlePreviewFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	JSON(w, http.StatusOK, result)
+}
+
+func HandleRedownloadFeed(w http.ResponseWriter, r *http.Request) {
+	feedID := chi.URLParam(r, "id")
+	if feedID == "" {
+		JSONError(w, http.StatusBadRequest, "feed ID is required")
+		return
+	}
+
+	// 1. S3/스토리지에서 해당 피드의 파일들 삭제
+	_ = storage.DeleteFeedStorageFiles(r.Context(), feedID)
+
+	// 2. DB 키 삭제 대기 큐에 등록
+	redownload.AddPending(feedID, "")
+
+	JSON(w, http.StatusOK, map[string]any{
+		"success": true,
+		"feedId":  feedID,
+		"pending": redownload.GetStatus(),
+		"message": "피드 전체 재다운로드가 대기 큐에 등록되었습니다. 상단 [적용 및 재시작]을 누르면 반영됩니다.",
+	})
+}
+
+func HandleRedownloadEpisode(w http.ResponseWriter, r *http.Request) {
+	feedID := chi.URLParam(r, "id")
+	episodeID := chi.URLParam(r, "episodeId")
+	if feedID == "" || episodeID == "" {
+		JSONError(w, http.StatusBadRequest, "feed ID and episode ID are required")
+		return
+	}
+
+	ext := r.URL.Query().Get("ext")
+	if ext == "" {
+		ext = "mp3"
+	}
+
+	// 1. S3/스토리지에서 해당 에피소드 파일 삭제
+	key := feedID + "/" + episodeID + "." + ext
+	_ = storage.DeleteStorageFile(r.Context(), key)
+
+	// 2. DB 키 삭제 대기 큐에 등록
+	redownload.AddPending(feedID, episodeID)
+
+	JSON(w, http.StatusOK, map[string]any{
+		"success":   true,
+		"feedId":    feedID,
+		"episodeId": episodeID,
+		"pending":   redownload.GetStatus(),
+		"message":   "에피소드 재다운로드가 대기 큐에 등록되었습니다. 상단 [적용 및 재시작]을 누르면 반영됩니다.",
+	})
+}
+
+func HandleGetRedownloadStatus(w http.ResponseWriter, r *http.Request) {
+	JSON(w, http.StatusOK, redownload.GetStatus())
 }
