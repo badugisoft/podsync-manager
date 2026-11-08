@@ -7,6 +7,12 @@
   let audioElement = $state<HTMLAudioElement | null>(null);
   let playbackRate = $state(1.0);
   let redownloading = $state(false);
+  const pageLoadedAt = Date.now();
+  let audioSrc = $derived(
+    data.episode.audioUrl
+      ? `${data.episode.audioUrl}${data.episode.audioUrl.includes('?') ? '&' : '?'}t=${pageLoadedAt}`
+      : ''
+  );
 
   async function handleRedownload() {
     if (!confirm(t('feedDetail.redownloadEpisodeConfirm'))) {
@@ -167,7 +173,7 @@
             class="w-full h-12 rounded-xl focus:outline-none"
             preload="metadata"
           >
-            <source src={data.episode.audioUrl} type="audio/mpeg" />
+            <source src={audioSrc} type="audio/mpeg" />
             {t('episodeDetail.audioNotSupported')}
           </audio>
 
@@ -214,7 +220,7 @@
         <!-- 직접 파일 다운로드 링크 -->
         <div class="pt-1">
           <a
-            href={data.episode.audioUrl}
+            href={audioSrc}
             target="_blank"
             rel="noreferrer"
             download
