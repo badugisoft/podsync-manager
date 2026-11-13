@@ -1,22 +1,29 @@
 export default {
   // Navigation & Common
   nav: {
-    feeds: '피드 목록',
-    episodes: '에피소드 목록',
-    logs: '컨테이너 로그',
-    settings: '글로벌 설정',
+    feeds: '피드',
+    feedsTooltip: '팟캐스트 피드 목록',
+    episodes: '에피소드',
+    episodesTooltip: '전체 에피소드 목록',
+    logs: '로그',
+    logsTooltip: '컨테이너 실시간 로그',
+    settings: '설정',
+    settingsTooltip: '글로벌 환경 설정',
     logout: '로그아웃',
-    syncRestart: '설정 적용 및 재시작',
+    syncRestart: '적용 · 재시작',
     applying: '적용 중...',
     restartSuccess: 'Podsync 컨테이너가 성공적으로 재시작되었습니다.',
     restartFailed: '컨테이너 재시작 실패',
-    statusRunning: '정상 가동 중',
+    statusRunning: '실행 중',
     statusStopped: '중지됨',
     statusRestarting: '재시작 중...',
     statusError: '오류',
-    changesPending: '적용 대기 중인 변경사항 있음',
-    noChanges: '컨테이너 동기화 완료됨',
-    appliedLatest: '최신 적용됨'
+    statusTooltipRunning: 'Podsync 컨테이너가 정상 가동 중입니다',
+    statusTooltipStopped: 'Podsync 컨테이너가 중지되어 있습니다',
+    statusTooltipOther: 'Podsync 컨테이너 상태: {status}',
+    changesPending: '적용 대기 중인 설정 변경사항이 있습니다 (클릭하여 검토 및 재시작)',
+    noChanges: '컨테이너와 설정이 동기화되어 있습니다 (클릭하여 설정 확인)',
+    appliedLatest: '동기화됨'
   },
   common: {
     save: '저장',

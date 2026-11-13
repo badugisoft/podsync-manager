@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Plus, Radio, ExternalLink, HardDrive, Copy, Check, Clock, Layers, Filter, Download, Search, ArrowUpDown, X } from '@lucide/svelte';
+  import { Plus, Radio, ExternalLink, HardDrive, Copy, Check, Clock, Layers, Filter, Download, Search, ArrowUpDown, X, Edit } from '@lucide/svelte';
   import YoutubeIcon from '$lib/components/YoutubeIcon.svelte';
   import RssIcon from '$lib/components/RssIcon.svelte';
   import { getNextSyncInfo } from '$lib/utils/schedule';
@@ -123,41 +123,41 @@
   }
 </script>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-5">
   <!-- 상단 요약 & S3 용량 위젯 -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <!-- 등록된 피드 수 -->
-    <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 backdrop-blur flex items-center justify-between">
+    <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-4 backdrop-blur flex items-center justify-between">
       <div>
-        <p class="text-sm font-medium text-slate-400">{t('nav.feeds')}</p>
-        <p class="text-3xl font-bold text-white mt-2">
+        <p class="text-xs font-medium text-slate-400">{t('nav.feedsTooltip')}</p>
+        <p class="text-2xl font-bold text-white mt-1">
           {data.feeds.length === 1
             ? t('home.feedCountSingle', { count: 1 })
             : t('home.feedCountPlural', { count: data.feeds.length })}
         </p>
       </div>
-      <div class="w-12 h-12 rounded-xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-        <Radio class="w-6 h-6" />
+      <div class="w-10 h-10 rounded-xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+        <Radio class="w-5 h-5" />
       </div>
     </div>
 
     <!-- S3 스토리지 사용량 (수동 계산) -->
-    <div class="md:col-span-2 bg-slate-900/70 border border-slate-800 rounded-2xl p-6 backdrop-blur flex flex-col justify-between">
+    <div class="md:col-span-2 bg-slate-900/70 border border-slate-800 rounded-xl p-4 backdrop-blur flex flex-col justify-between">
       <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <HardDrive class="w-5 h-5 text-indigo-400" />
-          <h3 class="text-sm font-semibold text-white">{t('home.storageUsage')}</h3>
+        <div class="flex items-center gap-2">
+          <HardDrive class="w-4 h-4 text-indigo-400" />
+          <h3 class="text-xs font-semibold text-white">{t('home.storageUsage')}</h3>
         </div>
         <button
           onclick={handleCalculateStorage}
           disabled={calculatingStorage}
-          class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors disabled:opacity-50"
+          class="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors disabled:opacity-50"
         >
           {calculatingStorage ? t('home.storageCalculating') : t('home.storageCalculateBtn')}
         </button>
       </div>
 
-      <div class="mt-4">
+      <div class="mt-2.5">
         {#if storageStats}
           <div>
             <div class="flex items-center justify-between text-xs mb-1.5">
@@ -284,138 +284,110 @@
       </button>
     </div>
   {:else}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {#each processedFeeds() as feed (feed.id)}
         {@const syncInfo = getNextSyncInfo(feed.update_period, feed.cron_schedule, data.uptime, tick, i18n.locale)}
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-slate-700 transition-all shadow-sm">
-          <div>
-            <!-- 헤더: 채널 커버 이미지 & Feed 정보 (전체 가로폭 확보) -->
-            <div class="flex items-start gap-3.5">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 flex flex-col justify-between hover:border-indigo-500/40 transition-all shadow-sm">
+          <!-- 상단: 썸네일 + 제목/요약 + 퀵 아이콘 액션 -->
+          <div class="flex items-start justify-between gap-2.5">
+            <a href="/feeds/{feed.id}" class="flex items-center gap-3 min-w-0 flex-1 group">
               {#if feed.image}
                 <img
                   src={feed.image}
                   alt={feed.title || feed.id}
-                  class="w-12 h-12 rounded-xl object-cover bg-slate-950 border border-slate-800 shadow-md shrink-0"
+                  class="w-11 h-11 rounded-xl object-cover bg-slate-950 border border-slate-800 shrink-0"
                   loading="lazy"
                 />
               {:else}
-                <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
-                  <YoutubeIcon class="w-6 h-6" />
+                <div class="w-11 h-11 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
+                  <YoutubeIcon class="w-5 h-5" />
                 </div>
               {/if}
 
               <div class="min-w-0 flex-1">
-                <h3 class="font-bold text-white text-base leading-snug line-clamp-2 break-words" title={feed.title || feed.id}>
+                <h3 class="font-bold text-white text-sm leading-snug line-clamp-1 group-hover:text-indigo-400 transition-colors" title={feed.title || feed.id}>
                   {feed.title || feed.id}
                 </h3>
-                <div class="flex items-center gap-1.5 mt-1 text-[11px] text-slate-400 flex-wrap">
+                <div class="flex items-center gap-1.5 mt-0.5 text-[11px] text-slate-400 truncate">
                   <span class="font-mono text-indigo-400 truncate">{feed.id}</span>
                   <span class="text-slate-600">·</span>
-                  <span class="text-slate-300">
+                  <span class="text-slate-300 shrink-0">
                     {feed.format === 'video'
                       ? (feed.quality === 'high' ? t('home.formatVideoHigh') : t('home.formatVideoLow'))
                       : (feed.quality === 'high' ? t('home.formatAudioHigh') : t('home.formatAudioLow'))}
                   </span>
+                  <span class="text-slate-600">·</span>
+                  <span class="text-slate-400 shrink-0">
+                    {feed.episodeCount === 1
+                      ? t('home.episodeCountSingle', { count: 1 })
+                      : t('home.episodeCountPlural', { count: feed.episodeCount ?? 0 })}
+                  </span>
                 </div>
               </div>
-            </div>
+            </a>
 
-            <!-- RSS 열기 / 복사하기 버튼 그룹 (독립 행) -->
-            <div class="mt-3.5 flex items-center gap-2">
-              <a
-                href="{data.hostname.replace(/\/+$/, '')}/{feed.id}.xml"
-                target="_blank"
-                rel="noreferrer"
-                class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700/80 transition-colors"
-                title={t('home.openRss')}
-              >
-                <ExternalLink class="w-3.5 h-3.5 text-orange-400" />
-                <span class="text-[11px] font-medium">{t('home.openRss')}</span>
-              </a>
-
+            <!-- 우측 고스트 아이콘 퀵액션 (박스 없음) -->
+            <div class="flex items-center gap-0.5 shrink-0 -mr-1">
               <button
                 type="button"
                 onclick={() => copyRssUrl(feed.id)}
-                class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs rounded-lg bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 transition-colors"
+                class="p-1.5 rounded-lg text-slate-400 hover:text-orange-400 hover:bg-slate-800/70 transition-colors cursor-pointer"
                 title={t('home.copyRss')}
+                aria-label={t('home.copyRss')}
               >
                 {#if copiedId === feed.id}
                   <Check class="w-3.5 h-3.5 text-emerald-400" />
-                  <span class="text-[11px] font-medium text-emerald-400">{t('common.copied')}</span>
                 {:else}
-                  <Copy class="w-3.5 h-3.5 text-orange-400" />
-                  <span class="text-[11px] font-medium">{t('home.copyRss')}</span>
+                  <RssIcon class="w-3.5 h-3.5" />
                 {/if}
               </button>
-            </div>
 
-            <!-- 메타데이터 속성 태그들 -->
-            <div class="mt-4 space-y-2 text-xs text-slate-400">
-              <div class="flex items-center gap-1.5">
-                <Clock class="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <span>{t('home.syncInterval')}: <strong class="text-slate-300 font-mono">{feed.update_period || feed.cron_schedule || 'default'}</strong></span>
-              </div>
-              {#if syncInfo}
-                <div class="flex items-center gap-1.5 text-indigo-300 bg-indigo-950/40 px-2.5 py-1.5 rounded-lg border border-indigo-500/20 text-[11px]">
-                  <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
-                  <span>{t('home.nextSync')}: <strong class="text-white">{syncInfo.remaining}</strong> ({syncInfo.nextTime})</span>
-                </div>
-              {/if}
-              {#if feed.clean?.keep_last}
-                <div class="flex items-center gap-1.5">
-                  <Layers class="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                  <span>{t('feedForm.cleanKeepLast')}: <strong class="text-slate-300">{feed.clean.keep_last}</strong></span>
-                </div>
-              {/if}
-              {#if feed.filters?.min_duration}
-                <div class="flex items-center gap-1.5">
-                  <Filter class="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                  <span>{t('feedForm.filterMinDuration')}: <strong class="text-slate-300">{feed.filters.min_duration}s</strong></span>
-                </div>
-              {/if}
-              {#if feed.filters?.max_duration}
-                <div class="flex items-center gap-1.5">
-                  <Filter class="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                  <span>{t('feedForm.filterMaxDuration')}: <strong class="text-slate-300">{feed.filters.max_duration}s</strong></span>
-                </div>
-              {/if}
-            </div>
-
-            <!-- YouTube URL 링크 -->
-            <div class="mt-4 pt-3 border-t border-slate-800/80">
               <a
                 href={feed.url}
                 target="_blank"
                 rel="noreferrer"
-                class="inline-flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 hover:underline truncate max-w-full"
+                class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800/70 transition-colors"
+                title={t('episodeDetail.openOnYoutube')}
+                aria-label={t('episodeDetail.openOnYoutube')}
               >
-                <span>{t('episodeDetail.openOnYoutube')}</span>
-                <ExternalLink class="w-3 h-3 shrink-0" />
+                <YoutubeIcon class="w-3.5 h-3.5" />
+              </a>
+
+              <a
+                href="/feeds/{feed.id}/edit"
+                class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-400 hover:bg-slate-800/70 transition-colors"
+                title={t('common.edit')}
+                aria-label={t('common.edit')}
+              >
+                <Edit class="w-3.5 h-3.5" />
               </a>
             </div>
           </div>
 
-          <!-- 하단 액션 버튼들 -->
-          <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between gap-2">
-            <a
-              href="/feeds/{feed.id}"
-              class="flex-1 text-center py-2 px-3 text-xs font-semibold rounded-lg bg-indigo-600/10 border border-indigo-500/20 text-indigo-300 hover:bg-indigo-600/20 transition-colors"
-            >
-              {t('feedDetail.episodesList')}
-            </a>
-            <a
-              href="/feeds/new?cloneFrom={feed.id}"
-              class="py-2 px-3 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
-              title={t('feedDetail.cloneFeed')}
-            >
-              {t('common.clone')}
-            </a>
-            <a
-              href="/feeds/{feed.id}/edit"
-              class="py-2 px-3 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
-            >
-              {t('common.edit')}
-            </a>
+          <!-- 하단: 심플한 상태 텍스트 1줄 -->
+          <div class="mt-3.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between gap-2 text-[11px] text-slate-400">
+            <div class="flex items-center gap-1.5 min-w-0">
+              {#if syncInfo}
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shrink-0"></span>
+                <span class="truncate" title="{syncInfo.nextTime}">
+                  {t('home.nextSync')}: <strong class="text-slate-200 font-medium">{syncInfo.remaining}</strong>
+                </span>
+              {:else}
+                <Clock class="w-3 h-3 text-slate-500 shrink-0" />
+                <span class="truncate">{t('home.syncInterval')}: <strong class="text-slate-300 font-mono">{feed.update_period || feed.cron_schedule || 'default'}</strong></span>
+              {/if}
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0 text-slate-400">
+              <span class="font-mono text-slate-300">{feed.update_period || feed.cron_schedule || 'default'}</span>
+              {#if feed.clean?.keep_last}
+                <span class="text-slate-600">·</span>
+                <span class="inline-flex items-center gap-0.5" title={t('feedForm.cleanKeepLast')}>
+                  <Layers class="w-3 h-3 text-slate-500" />
+                  <span>{feed.clean.keep_last}</span>
+                </span>
+              {/if}
+            </div>
           </div>
         </div>
       {/each}

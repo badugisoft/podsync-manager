@@ -1,10 +1,14 @@
 export default {
   // Navigation & Common
   nav: {
-    feeds: '播客订阅',
-    episodes: '单集列表',
-    logs: '容器日志',
-    settings: '全局设置',
+    feeds: '订阅',
+    feedsTooltip: '播客订阅源列表',
+    episodes: '单集',
+    episodesTooltip: '全部单集列表',
+    logs: '日志',
+    logsTooltip: '容器实时日志',
+    settings: '设置',
+    settingsTooltip: '全局设置',
     logout: '退出登录',
     syncRestart: '应用并重启',
     applying: '应用中...',
@@ -14,9 +18,12 @@ export default {
     statusStopped: '已停止',
     statusRestarting: '重启中...',
     statusError: '错误',
-    changesPending: '有等待重启的配置更改',
-    noChanges: '已与容器同步',
-    appliedLatest: '已是最新'
+    statusTooltipRunning: 'Podsync 容器正在正常运行',
+    statusTooltipStopped: 'Podsync 容器已停止',
+    statusTooltipOther: 'Podsync 容器状态: {status}',
+    changesPending: '有等待重启的配置更改（点击查看并重启）',
+    noChanges: '已与容器配置同步（点击查看详情）',
+    appliedLatest: '已同步'
   },
   common: {
     save: '保存',

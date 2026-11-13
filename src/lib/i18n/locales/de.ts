@@ -2,11 +2,15 @@ export default {
   // Navigation & Common
   nav: {
     feeds: 'Feeds',
+    feedsTooltip: 'Podcast-Feed-Liste',
     episodes: 'Episoden',
+    episodesTooltip: 'Alle synchronisierten Episoden',
     logs: 'Protokolle',
+    logsTooltip: 'Container-Echtzeitprotokolle',
     settings: 'Einstellungen',
+    settingsTooltip: 'Globale Einstellungen',
     logout: 'Abmelden',
-    syncRestart: 'Anwenden & Neu starten',
+    syncRestart: 'Anwenden & Neustart',
     applying: 'Wird angewendet...',
     restartSuccess: 'Podsync erfolgreich neu gestartet.',
     restartFailed: 'Fehler beim Neustart des Containers',
@@ -14,9 +18,12 @@ export default {
     statusStopped: 'Gestoppt',
     statusRestarting: 'Wird neu gestartet...',
     statusError: 'Fehler',
-    changesPending: 'Konfigurationsänderungen ausstehend',
-    noChanges: 'Mit Container synchronisiert',
-    appliedLatest: 'Synchronisiert'
+    statusTooltipRunning: 'Der Podsync-Container läuft normal',
+    statusTooltipStopped: 'Der Podsync-Container ist gestoppt',
+    statusTooltipOther: 'Podsync-Containerstatus: {status}',
+    changesPending: 'Konfigurationsänderungen ausstehend (klicken zum Prüfen & Neustarten)',
+    noChanges: 'Konfiguration ist mit dem Container synchronisiert (klicken zum Prüfen)',
+    appliedLatest: 'Synchron'
   },
   common: {
     save: 'Speichern',

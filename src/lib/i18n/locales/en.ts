@@ -2,9 +2,13 @@ export default {
   // Navigation & Common
   nav: {
     feeds: 'Feeds',
+    feedsTooltip: 'Podcast Feeds List',
     episodes: 'Episodes',
+    episodesTooltip: 'All Synchronized Episodes',
     logs: 'Logs',
+    logsTooltip: 'Real-time Container Logs',
     settings: 'Settings',
+    settingsTooltip: 'Global Configuration Settings',
     logout: 'Logout',
     syncRestart: 'Apply & Restart',
     applying: 'Applying...',
@@ -14,8 +18,11 @@ export default {
     statusStopped: 'Stopped',
     statusRestarting: 'Restarting...',
     statusError: 'Error',
-    changesPending: 'Config changes pending restart',
-    noChanges: 'Synced with container',
+    statusTooltipRunning: 'Podsync container is running normally',
+    statusTooltipStopped: 'Podsync container is stopped',
+    statusTooltipOther: 'Podsync container status: {status}',
+    changesPending: 'Config changes pending restart (Click to review & apply)',
+    noChanges: 'Configuration is synced with container (Click to inspect)',
     appliedLatest: 'Synced'
   },
   common: {

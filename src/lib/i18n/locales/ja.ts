@@ -1,12 +1,16 @@
 export default {
   // Navigation & Common
   nav: {
-    feeds: 'フィード一覧',
-    episodes: 'エピソード一覧',
-    logs: 'コンテナログ',
-    settings: 'グローバル設定',
+    feeds: 'フィード',
+    feedsTooltip: 'ポッドキャストフィード一覧',
+    episodes: 'エピソード',
+    episodesTooltip: '全エピソード一覧',
+    logs: 'ログ',
+    logsTooltip: 'コンテナリアルタイムログ',
+    settings: '設定',
+    settingsTooltip: 'グローバル設定',
     logout: 'ログアウト',
-    syncRestart: '適用して再起動',
+    syncRestart: '適用・再起動',
     applying: '適用中...',
     restartSuccess: 'Podsyncが正常に再起動されました。',
     restartFailed: 'コンテナの再起動に失敗しました',
@@ -14,9 +18,12 @@ export default {
     statusStopped: '停止中',
     statusRestarting: '再起動中...',
     statusError: 'エラー',
-    changesPending: '再起動待ちの変更があります',
-    noChanges: '同期完了',
-    appliedLatest: '最新'
+    statusTooltipRunning: 'Podsyncコンテナは正常に稼働しています',
+    statusTooltipStopped: 'Podsyncコンテナは停止しています',
+    statusTooltipOther: 'Podsyncコンテナ状態: {status}',
+    changesPending: '再起動待ちの設定変更があります（クリックして確認・再起動）',
+    noChanges: 'コンテナと設定は同期されています（クリックして確認）',
+    appliedLatest: '同期済み'
   },
   common: {
     save: '保存',

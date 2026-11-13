@@ -1,7 +1,7 @@
 <script lang="ts">
   import '../app.css';
   import { page } from '$app/stores';
-  import { Radio, ListMusic, RefreshCw, Terminal, Sliders, LogOut, CheckCircle2, AlertCircle, ChevronDown } from '@lucide/svelte';
+  import { Radio, Rss, ListMusic, RefreshCw, Terminal, Sliders, LogOut, CheckCircle2, AlertCircle, ChevronDown } from '@lucide/svelte';
   import ApplyModal from '$lib/components/ApplyModal.svelte';
   import ThemeToggle from '$lib/components/ThemeToggle.svelte';
   import { i18n, t, SUPPORTED_LOCALES, type Locale } from '$lib/i18n/index.svelte';
@@ -60,29 +60,34 @@
           <nav class="hidden md:flex items-center gap-1">
             <a
               href="/"
-              class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors {$page.url.pathname === '/' || $page.url.pathname.startsWith('/feeds') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
+              title={t('nav.feedsTooltip')}
+              class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 whitespace-nowrap transition-colors {$page.url.pathname === '/' || $page.url.pathname.startsWith('/feeds') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
             >
-              {t('nav.feeds')}
+              <Rss class="w-4 h-4 shrink-0" />
+              <span>{t('nav.feeds')}</span>
             </a>
             <a
               href="/episodes"
-              class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-colors {$page.url.pathname.startsWith('/episodes') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
+              title={t('nav.episodesTooltip')}
+              class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 whitespace-nowrap transition-colors {$page.url.pathname.startsWith('/episodes') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
             >
-              <ListMusic class="w-4 h-4" />
+              <ListMusic class="w-4 h-4 shrink-0" />
               <span>{t('nav.episodes')}</span>
             </a>
             <a
               href="/logs"
-              class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-colors {$page.url.pathname.startsWith('/logs') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
+              title={t('nav.logsTooltip')}
+              class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 whitespace-nowrap transition-colors {$page.url.pathname.startsWith('/logs') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
             >
-              <Terminal class="w-4 h-4" />
+              <Terminal class="w-4 h-4 shrink-0" />
               <span>{t('nav.logs')}</span>
             </a>
             <a
               href="/settings"
-              class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-colors {$page.url.pathname.startsWith('/settings') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
+              title={t('nav.settingsTooltip')}
+              class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 whitespace-nowrap transition-colors {$page.url.pathname.startsWith('/settings') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
             >
-              <Sliders class="w-4 h-4" />
+              <Sliders class="w-4 h-4 shrink-0" />
               <span>{t('nav.settings')}</span>
             </a>
           </nav>
@@ -134,15 +139,22 @@
           </div>
 
           <!-- Container Status Badge -->
-          <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium border bg-slate-900 border-slate-800">
+          <div
+            class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium border bg-slate-900 border-slate-800 whitespace-nowrap"
+            title={data.container.status === 'running'
+              ? t('nav.statusTooltipRunning')
+              : data.container.status === 'exited'
+                ? t('nav.statusTooltipStopped')
+                : t('nav.statusTooltipOther', { status: data.container.status })}
+          >
             {#if data.container.status === 'running'}
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
               <span class="text-emerald-400 font-mono">podsync: {t('nav.statusRunning')}</span>
             {:else if data.container.status === 'exited'}
-              <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+              <span class="w-2 h-2 rounded-full bg-slate-500 shrink-0"></span>
               <span class="text-slate-400 font-mono">podsync: {t('nav.statusStopped')}</span>
             {:else}
-              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
               <span class="text-amber-400 font-mono">podsync: {data.container.status}</span>
             {/if}
           </div>
@@ -151,20 +163,20 @@
           {#if data.hasPendingChanges}
             <button
               onclick={handleOpenApplyModal}
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md transition-all animate-pulse"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md transition-all animate-pulse whitespace-nowrap"
               title={t('nav.changesPending')}
             >
-              <RefreshCw class="w-3.5 h-3.5" />
+              <RefreshCw class="w-3.5 h-3.5 shrink-0" />
               <span>{t('nav.syncRestart')}</span>
             </button>
           {:else}
             <button
               onclick={handleOpenApplyModal}
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 transition-colors"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 transition-colors whitespace-nowrap"
               title={t('nav.noChanges')}
             >
-              <CheckCircle2 class="w-3.5 h-3.5 text-slate-500" />
-              <span>{t('nav.noChanges')}</span>
+              <CheckCircle2 class="w-3.5 h-3.5 text-slate-500 shrink-0" />
+              <span>{t('nav.appliedLatest')}</span>
             </button>
           {/if}
 
