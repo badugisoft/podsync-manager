@@ -2,6 +2,7 @@ export default {
   // Navigation & Common
   nav: {
     feeds: 'Canales',
+    episodes: 'Episodios',
     logs: 'Registros',
     settings: 'Configuración',
     logout: 'Cerrar sesión',
@@ -488,5 +489,17 @@ export default {
     close: 'Cerrar',
     reasonLabel: 'Motivo de exclusión',
     containerNotice: 'Simulado mediante el motor yt-dlp del contenedor Podsync y las reglas de filtro.'
+  },
+  // All Episodes Page
+  allEpisodes: {
+    title: 'Todos los episodios',
+    subtitle: 'Explore y gestione los episodios sincronizados de todos los canales en un solo lugar.',
+    searchPlaceholder: 'Buscar título, descripción o canal...',
+    allFeeds: 'Todos los canales',
+    sortLatest: 'Más recientes',
+    sortOldest: 'Más antiguos',
+    sortSizeDesc: 'Mayor tamaño',
+    totalEpisodesCount: '{count} episodios en total',
+    filteredCount: 'Mostrando {filtered} de {total} episodios'
   }
 } as const;

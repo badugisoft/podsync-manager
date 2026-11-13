@@ -1,7 +1,7 @@
 <script lang="ts">
   import '../app.css';
   import { page } from '$app/stores';
-  import { Radio, RefreshCw, Terminal, Sliders, LogOut, CheckCircle2, AlertCircle, ChevronDown } from '@lucide/svelte';
+  import { Radio, ListMusic, RefreshCw, Terminal, Sliders, LogOut, CheckCircle2, AlertCircle, ChevronDown } from '@lucide/svelte';
   import ApplyModal from '$lib/components/ApplyModal.svelte';
   import ThemeToggle from '$lib/components/ThemeToggle.svelte';
   import { i18n, t, SUPPORTED_LOCALES, type Locale } from '$lib/i18n/index.svelte';
@@ -63,6 +63,13 @@
               class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors {$page.url.pathname === '/' || $page.url.pathname.startsWith('/feeds') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
             >
               {t('nav.feeds')}
+            </a>
+            <a
+              href="/episodes"
+              class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-colors {$page.url.pathname.startsWith('/episodes') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
+            >
+              <ListMusic class="w-4 h-4" />
+              <span>{t('nav.episodes')}</span>
             </a>
             <a
               href="/logs"

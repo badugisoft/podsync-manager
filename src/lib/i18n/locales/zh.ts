@@ -2,6 +2,7 @@ export default {
   // Navigation & Common
   nav: {
     feeds: '播客订阅',
+    episodes: '单集列表',
     logs: '容器日志',
     settings: '全局设置',
     logout: '退出登录',
@@ -491,5 +492,17 @@ export default {
     close: '关闭',
     reasonLabel: '排除原因',
     containerNotice: '通过 Podsync 容器的 yt-dlp 引擎及过滤规则模拟的结果。'
+  },
+  // All Episodes Page
+  allEpisodes: {
+    title: '全部单集列表',
+    subtitle: '在一个地方浏览和管理所有订阅源同步的单集。',
+    searchPlaceholder: '搜索单集标题、描述或订阅源...',
+    allFeeds: '全部订阅源',
+    sortLatest: '最新发布',
+    sortOldest: '最早发布',
+    sortSizeDesc: '文件最大',
+    totalEpisodesCount: '共 {count} 个单集',
+    filteredCount: '显示 {filtered} / {total} 个单集'
   }
 } as const;

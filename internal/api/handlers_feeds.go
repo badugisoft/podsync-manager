@@ -1,12 +1,14 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"regexp"
 	"sort"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/badugisoft/podsync-manager/internal/config"
 	"github.com/badugisoft/podsync-manager/internal/episodes"
@@ -26,6 +28,70 @@ type FeedListItem struct {
 	Image        string `json:"image,omitempty"`
 	EpisodeCount int    `json:"episodeCount"`
 	*config.FeedConfig
+}
+
+type AllEpisodeItem struct {
+	episodes.EpisodeItem
+	FeedID    string `json:"feedId"`
+	FeedTitle string `json:"feedTitle"`
+	FeedImage string `json:"feedImage,omitempty"`
+	Format    string `json:"format,omitempty"`
+}
+
+type FeedSummaryItem struct {
+	ID    string `json:"id"`
+	Title string `json:"title"`
+	Image string `json:"image,omitempty"`
+}
+
+// resolveFeedEpisodesMeta fetches episodes for a feed and resolves its display title and image.
+func resolveFeedEpisodesMeta(ctx context.Context, feedID string, f *config.FeedConfig) (title, image string, epList []episodes.EpisodeItem) {
+	title = feedID
+	epRes, err := episodes.FetchFeedEpisodes(ctx, feedID)
+	if err == nil && epRes != nil {
+		if epRes.Channel.Title != "" {
+			title = epRes.Channel.Title
+		}
+		image = epRes.Channel.Image
+		if image == "" && len(epRes.Episodes) > 0 {
+			image = epRes.Episodes[0].Thumbnail
+		}
+		epList = epRes.Episodes
+	}
+	if f != nil && f.Custom != nil {
+		if f.Custom.Title != "" {
+			title = f.Custom.Title
+		}
+		if f.Custom.CoverArt != "" && image == "" {
+			image = f.Custom.CoverArt
+		}
+	}
+	return title, image, epList
+}
+
+// parsePubDate parses common RSS/Atom publication date strings.
+func parsePubDate(raw string) (time.Time, bool) {
+	s := strings.TrimSpace(raw)
+	if s == "" {
+		return time.Time{}, false
+	}
+	layouts := []string{
+		time.RFC1123Z,
+		time.RFC1123,
+		time.RFC3339,
+		time.RFC3339Nano,
+		"Mon, 2 Jan 2006 15:04:05 -0700",
+		"Mon, 2 Jan 2006 15:04:05 MST",
+		"2 Jan 2006 15:04:05 -0700",
+		"2006-01-02 15:04:05",
+		"2006-01-02",
+	}
+	for _, layout := range layouts {
+		if t, err := time.Parse(layout, s); err == nil {
+			return t, true
+		}
+	}
+	return time.Time{}, false
 }
 
 func HandleListFeeds(w http.ResponseWriter, r *http.Request) {
@@ -55,30 +121,7 @@ func HandleListFeeds(w http.ResponseWriter, r *http.Request) {
 			wg.Add(1)
 			go func(idx int, feedID string, f *config.FeedConfig) {
 				defer wg.Done()
-				title := feedID
-				var image string
-				epCount := 0
-
-				epRes, err := episodes.FetchFeedEpisodes(r.Context(), feedID)
-				if err == nil && epRes != nil {
-					if epRes.Channel.Title != "" {
-						title = epRes.Channel.Title
-					}
-					image = epRes.Channel.Image
-					if image == "" && len(epRes.Episodes) > 0 {
-						image = epRes.Episodes[0].Thumbnail
-					}
-					epCount = len(epRes.Episodes)
-				}
-
-				if f != nil && f.Custom != nil {
-					if f.Custom.Title != "" {
-						title = f.Custom.Title
-					}
-					if f.Custom.CoverArt != "" && image == "" {
-						image = f.Custom.CoverArt
-					}
-				}
+				title, image, epList := resolveFeedEpisodesMeta(r.Context(), feedID, f)
 
 				resChan <- result{
 					index: idx,
@@ -86,7 +129,7 @@ func HandleListFeeds(w http.ResponseWriter, r *http.Request) {
 						ID:           feedID,
 						Title:        title,
 						Image:        image,
-						EpisodeCount: epCount,
+						EpisodeCount: len(epList),
 						FeedConfig:   f,
 					},
 				}
@@ -108,6 +151,100 @@ func HandleListFeeds(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, map[string]any{
 		"feeds":      list,
 		"configPath": config.GetConfigPath(),
+	})
+}
+
+func HandleListAllEpisodes(w http.ResponseWriter, r *http.Request) {
+	cfg, _, err := config.LoadConfig()
+	if err != nil {
+		JSONError(w, http.StatusInternalServerError, "Failed to load feeds: "+err.Error())
+		return
+	}
+
+	allEpisodes := []AllEpisodeItem{}
+	feedSummaries := []FeedSummaryItem{}
+
+	if len(cfg.Feeds) > 0 {
+		type feedResult struct {
+			index    int
+			summary  FeedSummaryItem
+			episodes []AllEpisodeItem
+		}
+
+		keys := make([]string, 0, len(cfg.Feeds))
+		for k := range cfg.Feeds {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+
+		resChan := make(chan feedResult, len(keys))
+		var wg sync.WaitGroup
+
+		for i, id := range keys {
+			wg.Add(1)
+			go func(idx int, feedID string, f *config.FeedConfig) {
+				defer wg.Done()
+				title, image, epList := resolveFeedEpisodesMeta(r.Context(), feedID, f)
+				format := ""
+				if f != nil {
+					format = f.Format
+				}
+
+				items := make([]AllEpisodeItem, 0, len(epList))
+				for _, ep := range epList {
+					items = append(items, AllEpisodeItem{
+						EpisodeItem: ep,
+						FeedID:      feedID,
+						FeedTitle:   title,
+						FeedImage:   image,
+						Format:      format,
+					})
+				}
+
+				resChan <- feedResult{
+					index: idx,
+					summary: FeedSummaryItem{
+						ID:    feedID,
+						Title: title,
+						Image: image,
+					},
+					episodes: items,
+				}
+			}(i, id, cfg.Feeds[id])
+		}
+
+		wg.Wait()
+		close(resChan)
+
+		ordered := make([]feedResult, len(keys))
+		for res := range resChan {
+			ordered[res.index] = res
+		}
+
+		for _, res := range ordered {
+			feedSummaries = append(feedSummaries, res.summary)
+			allEpisodes = append(allEpisodes, res.episodes...)
+		}
+
+		sort.SliceStable(allEpisodes, func(i, j int) bool {
+			ti, oki := parsePubDate(allEpisodes[i].PubDate)
+			tj, okj := parsePubDate(allEpisodes[j].PubDate)
+			if oki && okj {
+				if !ti.Equal(tj) {
+					return ti.After(tj)
+				}
+				return false
+			}
+			if oki != okj {
+				return oki
+			}
+			return allEpisodes[i].PubDate > allEpisodes[j].PubDate
+		})
+	}
+
+	JSON(w, http.StatusOK, map[string]any{
+		"episodes": allEpisodes,
+		"feeds":    feedSummaries,
 	})
 }
 

@@ -2,6 +2,7 @@ export default {
   // Navigation & Common
   nav: {
     feeds: '피드 목록',
+    episodes: '에피소드 목록',
     logs: '컨테이너 로그',
     settings: '글로벌 설정',
     logout: '로그아웃',
@@ -491,5 +492,17 @@ export default {
     close: '닫기',
     reasonLabel: '제외 사유',
     containerNotice: 'Podsync 컨테이너의 yt-dlp 엔진 및 필터 규칙을 통해 시뮬레이션된 결과입니다.'
+  },
+  // All Episodes Page
+  allEpisodes: {
+    title: '전체 에피소드 목록',
+    subtitle: '모든 피드에서 동기화된 에피소드를 한눈에 확인하고 관리하세요.',
+    searchPlaceholder: '에피소드 제목, 설명 또는 피드 검색...',
+    allFeeds: '전체 피드',
+    sortLatest: '최신순',
+    sortOldest: '오래된 순',
+    sortSizeDesc: '용량 큰 순',
+    totalEpisodesCount: '총 {count}개 에피소드',
+    filteredCount: '검색 결과 {filtered}개 (전체 {total}개)'
   }
 } as const;

@@ -2,6 +2,7 @@ export default {
   // Navigation & Common
   nav: {
     feeds: 'Flux',
+    episodes: 'Épisodes',
     logs: 'Journaux',
     settings: 'Paramètres',
     logout: 'Déconnexion',
@@ -488,5 +489,17 @@ export default {
     close: 'Fermer',
     reasonLabel: 'Motif d’exclusion',
     containerNotice: 'Simulé via le moteur yt-dlp du conteneur Podsync et les règles de filtre.'
+  },
+  // All Episodes Page
+  allEpisodes: {
+    title: 'Tous les épisodes',
+    subtitle: 'Parcourez et gérez les épisodes synchronisés de tous les flux en un seul endroit.',
+    searchPlaceholder: 'Rechercher un titre, une description ou un flux...',
+    allFeeds: 'Tous les flux',
+    sortLatest: 'Plus récents',
+    sortOldest: 'Plus anciens',
+    sortSizeDesc: 'Plus volumineux',
+    totalEpisodesCount: '{count} épisodes au total',
+    filteredCount: 'Affichage de {filtered} sur {total} épisodes'
   }
 } as const;

@@ -47,7 +47,8 @@ func NewRouter() *chi.Mux {
 			protected.Get("/config/diff", HandleGetDiff)
 			protected.Post("/config/rollback", HandleRollback)
 
-			// Feeds
+			// Feeds & Episodes
+			protected.Get("/episodes", HandleListAllEpisodes)
 			protected.Get("/feeds", HandleListFeeds)
 			protected.Post("/feeds", HandleCreateFeed)
 			protected.Post("/feeds/preview", HandlePreviewFeed)

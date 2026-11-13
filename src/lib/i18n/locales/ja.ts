@@ -2,6 +2,7 @@ export default {
   // Navigation & Common
   nav: {
     feeds: 'フィード一覧',
+    episodes: 'エピソード一覧',
     logs: 'コンテナログ',
     settings: 'グローバル設定',
     logout: 'ログアウト',
@@ -491,5 +492,17 @@ export default {
     close: '閉じる',
     reasonLabel: '除外理由',
     containerNotice: 'Podsyncコンテナのyt-dlpエンジンとフィルター規則でシミュレーションされた結果です。'
+  },
+  // All Episodes Page
+  allEpisodes: {
+    title: '全エピソード一覧',
+    subtitle: 'すべてのフィードから同期されたエピソードを一覧で確認・管理できます。',
+    searchPlaceholder: 'エピソードのタイトル、説明、フィードを検索...',
+    allFeeds: 'すべてのフィード',
+    sortLatest: '新しい順',
+    sortOldest: '古い順',
+    sortSizeDesc: 'サイズが大きい順',
+    totalEpisodesCount: '全 {count} エピソード',
+    filteredCount: '{total} 件中 {filtered} 件を表示'
   }
 } as const;

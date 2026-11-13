@@ -2,6 +2,7 @@ export default {
   // Navigation & Common
   nav: {
     feeds: 'Feeds',
+    episodes: 'Episodes',
     logs: 'Logs',
     settings: 'Settings',
     logout: 'Logout',
@@ -491,5 +492,17 @@ export default {
     close: 'Close',
     reasonLabel: 'Reason',
     containerNotice: 'Simulated via Podsync container yt-dlp downloader and feed filter rules.'
+  },
+  // All Episodes Page
+  allEpisodes: {
+    title: 'All Episodes',
+    subtitle: 'Browse and manage synchronized episodes across all feeds in one place.',
+    searchPlaceholder: 'Search episode title, description, or feed...',
+    allFeeds: 'All Feeds',
+    sortLatest: 'Newest First',
+    sortOldest: 'Oldest First',
+    sortSizeDesc: 'Largest Size',
+    totalEpisodesCount: '{count} episodes total',
+    filteredCount: 'Showing {filtered} of {total} episodes'
   }
 } as const;
