@@ -48,7 +48,7 @@ func HandleSystemOverview(w http.ResponseWriter, r *http.Request) {
 		HasBackup:          config.HasBackupConfig(),
 		FeedsCount:         feedsCount,
 		MTime:              config.GetConfigMTime(),
-		Version:            "0.2.8",
+		Version:            "0.2.9",
 		PendingRedownloads: pendingStatus.Count,
 	})
 }
