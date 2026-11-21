@@ -21,7 +21,7 @@ This skill standardizes the day-to-day commit and push process for `podsync-mana
 - Ensure there are 0 errors and 0 warnings before proceeding.
 
 ### 3. Draft Commit Message & Seek User Approval
-- Formulate a clear, conventional commit message (e.g., `feat: ...`, `fix: ...`, `refactor: ...`, `docs: ...`).
+- Formulate a clear, conventional commit message in **English** (e.g., `feat: ...`, `fix: ...`, `refactor: ...`, `docs: ...`). All commit messages MUST be written in English.
 - **MANDATORY**: Present the staged file list and the exact commit message to the user and obtain explicit confirmation before running `git commit` or `git push`.
 
 ### 4. Execute Commit & Push

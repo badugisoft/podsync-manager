@@ -41,7 +41,7 @@ Always verify the complete build pipeline according to `AGENTS.md`:
    ```
 
 ### 4. Draft Release Notes & Seek User Confirmation
-- Prepare the release notes summarizing all changes since the previous tag:
+- Prepare the release title and release notes in **English** summarizing all changes since the previous tag (all release titles and notes MUST be written in English):
   - New features / enhancements
   - Bug fixes & architectural cleanups
   - UI / Localization updates
