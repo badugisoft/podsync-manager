@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Podsync Manager — Modern Web Dashboard &amp; Container Manager for Podsync</title>
+  <meta name="description" content="Manage Podsync podcast feeds, inspect TOML diffs, stream live Docker container logs, browse S3 storage, and play audio episodes in a single lightweight Go + Svelte 5 web dashboard.">
+  <meta property="og:title" content="Podsync Manager — Web Dashboard &amp; Container Manager for Podsync">
+  <meta property="og:description" content="Self-hosted Go + Svelte 5 dashboard for managing Podsync feeds, TOML diffs, live SSE Docker logs, S3 cloud storage, and in-browser audio playback.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://badugisoft.github.io/podsync-manager/">
+  <meta property="og:image" content="https://badugisoft.github.io/podsync-manager/assets/dashboard-preview.svg">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <script src="i18n.js" defer></script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a class="brand" href="#top" aria-label="Podsync Manager Home">
+        <img src="assets/favicon.svg" onerror="this.onerror=null;this.src='../assets/favicon.svg';" alt="" width="28" height="28" class="brand-icon">
+        <span class="brand-name">Podsync Manager</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#preview" data-i18n="nav_preview">Preview</a>
+        <a href="#features" data-i18n="nav_features">Features</a>
+        <a href="#how-it-works" data-i18n="nav_how">How It Works</a>
+        <a href="#install" data-i18n="nav_install">Install</a>
+        <a href="#faq" data-i18n="nav_faq">FAQ</a>
+      </nav>
+      <div class="nav-actions">
+        <select id="lang-select" aria-label="Language">
+          <option value="en">🇺🇸 English</option>
+          <option value="ko">🇰🇷 한국어</option>
+          <option value="ja">🇯🇵 日本語</option>
+          <option value="zh">🇨🇳 简体中文</option>
+          <option value="es">🇪🇸 Español</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="de">🇩🇪 Deutsch</option>
+        </select>
+        <a class="btn btn-ghost" href="https://github.com/badugisoft/podsync-manager" target="_blank" rel="noopener noreferrer" data-i18n="nav_github">GitHub</a>
+        <a class="btn btn-primary" href="https://github.com/badugisoft/podsync-manager/releases/latest" target="_blank" rel="noopener noreferrer" data-i18n="nav_release">Releases</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="badges">
+          <span class="badge badge-accent">v0.2.10</span>
+          <span class="badge" data-i18n="badge_stack">Go Single Binary + Svelte 5</span>
+          <span class="badge" data-i18n="badge_docker">Docker Multi-Arch</span>
+          <span class="badge" data-i18n="badge_i18n">7 Languages</span>
+        </div>
+        <h1 data-i18n="hero_title">Modern Web Dashboard &amp; Container Manager for Podsync</h1>
+        <p class="hero-subtitle" data-i18n="hero_subtitle">
+          Manage YouTube, Vimeo, SoundCloud, and Twitch podcast feeds without hand-editing config.toml. Review TOML diffs, stream live Docker logs, browse S3 storage, and play episodes directly in your browser.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg" href="#install" data-i18n="cta_quickstart">Quick Start with Docker</a>
+          <a class="btn btn-secondary btn-lg" href="https://github.com/badugisoft/podsync-manager" target="_blank" rel="noopener noreferrer" data-i18n="cta_github">View on GitHub</a>
+          <a class="btn btn-ghost btn-lg" href="https://github.com/badugisoft/podsync-manager/releases/latest" target="_blank" rel="noopener noreferrer" data-i18n="cta_download">Download Latest Release</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="preview" class="preview-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 data-i18n="preview_title">Dashboard Preview</h2>
+          <p data-i18n="preview_subtitle">Responsive light and dark interface built with Svelte 5 and Tailwind CSS, embedded into a ~35MB Alpine container.</p>
+        </div>
+        <figure class="preview-frame">
+          <img
+            src="assets/dashboard-preview.svg"
+            onerror="this.onerror=null;this.src='../assets/dashboard-preview.svg';"
+            alt="Podsync Manager Dashboard Preview"
+            fetchpriority="high"
+            width="1200"
+            height="720"
+          >
+          <figcaption data-i18n="preview_caption">Sensitive credentials and private tokens are masked automatically.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="features" class="features-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 data-i18n="features_title">Key Features</h2>
+          <p data-i18n="features_subtitle">Everything you need to operate Podsync reliably in a self-hosted homelab or cloud server.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">🎛️</div>
+            <h3 data-i18n="feat1_title">Feed Lifecycle &amp; YouTube Optimization</h3>
+            <p data-i18n="feat1_desc">Create, edit, or clone feeds with presets for format 18 (zero re-encoding), audio language priority, Android client emulation, Shorts &amp; live stream exclusion, and atomic .tmp/.bak file writes.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">🐳</div>
+            <h3 data-i18n="feat2_title">Safe Docker Control &amp; Diff Editor</h3>
+            <p data-i18n="feat2_desc">Inspect side-by-side TOML diffs between your staged config and the running container, edit raw TOML in-place with validation, and apply restarts explicitly.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">📜</div>
+            <h3 data-i18n="feat3_title">Real-Time SSE Log Streaming</h3>
+            <p data-i18n="feat3_desc">Monitor Podsync container stdout/stderr in real time with severity badges (INFO, WARN, ERROR), keyword search, tail line controls, and structured or raw views.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">☁️</div>
+            <h3 data-i18n="feat4_title">S3 Storage &amp; Web Audio Player</h3>
+            <p data-i18n="feat4_desc">Works with AWS S3, Cloudflare R2, MinIO, Wasabi, and local disk. Auto-detects container S3 credentials, computes on-demand usage, and streams audio with 1.0x–2.0x speed and ±15s skip.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">🌐</div>
+            <h3 data-i18n="feat5_title">7-Language i18n &amp; Adaptive Themes</h3>
+            <p data-i18n="feat5_desc">Full localization in English, Korean, Japanese, Simplified Chinese, Spanish, French, and German with zero-flicker Light, Dark, and System themes.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">🔐</div>
+            <h3 data-i18n="feat6_title">Self-Hosted Privacy &amp; Security</h3>
+            <p data-i18n="feat6_desc">Runs 100% locally in your own infrastructure with zero telemetry. Protected by HTTP-only session cookies and environment-injected S3/API credentials.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="steps-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 data-i18n="how_title">How It Works</h2>
+          <p data-i18n="how_subtitle">Deploy alongside your existing Podsync container in under a minute.</p>
+        </div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <span class="step-num">1</span>
+            <h3 data-i18n="step1_title">Mount Config &amp; Docker Socket</h3>
+            <p data-i18n="step1_desc">Share your ./config directory and /var/run/docker.sock with the podsync-manager container so it can manage config.toml atomically and inspect Podsync.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-num">2</span>
+            <h3 data-i18n="step2_title">Configure Feeds &amp; Preview Filters</h3>
+            <p data-i18n="step2_desc">Add YouTube, SoundCloud, Vimeo, or Twitch URLs, tune retention and duration rules, and simulate episode filtering before saving.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-num">3</span>
+            <h3 data-i18n="step3_title">Review Diff &amp; Apply Restart</h3>
+            <p data-i18n="step3_desc">Compare your staged changes in the Diff modal, click Apply &amp; Restart, and watch live SSE logs as Podsync syncs new episodes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="install" class="install-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 data-i18n="install_title">Installation &amp; Quick Start</h2>
+          <p data-i18n="install_subtitle">Choose Docker Compose, Docker CLI, or build the single Go binary from source.</p>
+        </div>
+
+        <div class="install-grid">
+          <div class="code-card">
+            <div class="code-header">
+              <span class="code-title" data-i18n="install_compose_title">Docker Compose (Recommended)</span>
+              <button type="button" class="copy-btn" data-copy-target="code-compose" data-i18n="btn_copy">Copy</button>
+            </div>
+            <pre><code id="code-compose">services:
+  podsync:
+    image: mxpv/podsync:latest
+    container_name: podsync
+    restart: unless-stopped
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+
+  podsync-manager:
+    image: ghcr.io/badugisoft/podsync-manager:latest
+    container_name: podsync-manager
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - PODSYNC_CONFIG_PATH=/app/config/config.toml
+      - PODSYNC_CONTAINER_NAME=podsync
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=your_secure_password</code></pre>
+          </div>
+
+          <div class="code-card">
+            <div class="code-header">
+              <span class="code-title" data-i18n="install_cli_title">Docker Run CLI</span>
+              <button type="button" class="copy-btn" data-copy-target="code-cli" data-i18n="btn_copy">Copy</button>
+            </div>
+            <pre><code id="code-cli">docker run -d \
+  --name podsync-manager \
+  -p 3000:3000 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v ./config:/app/config \
+  -e ADMIN_PASSWORD=your_secure_password \
+  ghcr.io/badugisoft/podsync-manager:latest</code></pre>
+          </div>
+
+          <div class="code-card">
+            <div class="code-header">
+              <span class="code-title" data-i18n="install_source_title">Local Single-Binary Build (Go + Node.js)</span>
+              <button type="button" class="copy-btn" data-copy-target="code-source" data-i18n="btn_copy">Copy</button>
+            </div>
+            <pre><code id="code-source">git clone https://github.com/badugisoft/podsync-manager.git
+cd podsync-manager
+cp .env.example .env
+npm install &amp;&amp; npm run build
+go build -o podsync-manager ./cmd/server
+./podsync-manager</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="faq-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="faq-heading" data-i18n="faq_title">Frequently Asked Questions</h2>
+        </div>
+        <section class="accordion" aria-labelledby="faq-heading">
+          <details>
+            <summary data-i18n="faq1_q">Why should I mount the ./config directory instead of config.toml directly?</summary>
+            <div class="faq-body">
+              <p data-i18n="faq1_a">Mounting the parent directory (-v ./config:/app/config) lets Podsync Manager write temporary files (.tmp), perform atomic renames, and create .bak backups on the same filesystem without EXDEV cross-device errors or stale bind-mount inodes.</p>
+            </div>
+          </details>
+          <details>
+            <summary data-i18n="faq2_q">Why does Podsync Manager need access to /var/run/docker.sock?</summary>
+            <div class="faq-body">
+              <p data-i18n="faq2_a">Docker socket access enables real-time container status checks, live SSE log streaming, explicit container restarts after config diff review, and automatic detection of S3 credentials configured on the Podsync container.</p>
+            </div>
+          </details>
+          <details>
+            <summary data-i18n="faq3_q">How does the YouTube format 18 preset reduce CPU usage and bot blocks?</summary>
+            <div class="faq-body">
+              <p data-i18n="faq3_a">Format 18 fetches a pre-muxed 360p stream directly from YouTube without server-side ffmpeg re-encoding. Combined with Android client emulation (--extractor-args youtube:player-client=android), it speeds up downloads and avoids rate-limit blocks.</p>
+            </div>
+          </details>
+          <details>
+            <summary data-i18n="faq4_q">How are S3 credentials and API tokens stored?</summary>
+            <div class="faq-body">
+              <p data-i18n="faq4_a">S3 keys and YouTube/Vimeo/SoundCloud/Twitch tokens can be injected via environment variables and are masked in the UI. Podsync Manager never transmits credentials outside your host and the configured S3 endpoint.</p>
+            </div>
+          </details>
+          <details>
+            <summary data-i18n="faq5_q">Does Podsync Manager collect any telemetry or analytics?</summary>
+            <div class="faq-body">
+              <p data-i18n="faq5_a">No. Podsync Manager is 100% self-hosted and collects zero telemetry, tracking, or usage analytics.</p>
+            </div>
+          </details>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <strong>Podsync Manager</strong>
+        <span data-i18n="footer_credit">MIT License · Built for mxpv/podsync</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/badugisoft/podsync-manager" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/badugisoft/podsync-manager/releases" target="_blank" rel="noopener noreferrer" data-i18n="footer_releases">Releases</a>
+        <a href="https://github.com/badugisoft/podsync-manager/issues" target="_blank" rel="noopener noreferrer" data-i18n="footer_issues">Issues</a>
+        <a href="https://github.com/badugisoft/podsync-manager/blob/main/SECURITY.md" target="_blank" rel="noopener noreferrer" data-i18n="footer_security">Security</a>
+        <a href="https://github.com/badugisoft/podsync-manager/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer" data-i18n="footer_contributing">Contributing</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

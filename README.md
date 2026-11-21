@@ -1,90 +1,99 @@
-# Podsync Manager 🎙️
+# Podsync Manager
 
 > **Modern Web Dashboard & Container Manager for [Podsync](https://github.com/mxpv/podsync)**  
 > *Crafted and built with [Google Antigravity](https://deepmind.google/technologies/gemini/).*
 
----
+[![Latest Release](https://img.shields.io/github/v/release/badugisoft/podsync-manager?style=flat&logo=github)](https://github.com/badugisoft/podsync-manager/releases/latest)
+[![Total Downloads](https://img.shields.io/github/downloads/badugisoft/podsync-manager/total?style=flat&logo=github)](https://github.com/badugisoft/podsync-manager/releases)
+[![Go](https://img.shields.io/badge/Go-1.24%2B-00ADD8?style=flat&logo=go&logoColor=white)](https://go.dev/)
+[![Svelte](https://img.shields.io/badge/Svelte-5.x-FF3E00?style=flat&logo=svelte&logoColor=white)](https://svelte.dev/)
+[![Docker](https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ED?style=flat&logo=docker&logoColor=white)](https://github.com/badugisoft/podsync-manager/pkgs/container/podsync-manager)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat)](LICENSE)
+[![Website](https://img.shields.io/badge/Website-GitHub_Pages-4F46E5?style=flat&logo=githubpages&logoColor=white)](https://badugisoft.github.io/podsync-manager/)
 
-[![SvelteKit](https://img.shields.io/badge/SvelteKit-5.x-FF3E00?style=flat&logo=svelte&logoColor=white)](https://kit.svelte.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.x-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Built with Antigravity](https://img.shields.io/badge/Built_with-Google_Antigravity-4285F4?style=flat&logo=google&logoColor=white)](#built-with-google-antigravity)
+<p align="center">
+  <strong>English</strong> ·
+  <a href="docs/README.ko.md">한국어</a> ·
+  <a href="docs/README.ja.md">日本語</a> ·
+  <a href="docs/README.zh.md">简体中文</a> ·
+  <a href="docs/README.es.md">Español</a> ·
+  <a href="docs/README.fr.md">Français</a> ·
+  <a href="docs/README.de.md">Deutsch</a>
+</p>
 
-**Podsync Manager** is a premium, open-source dashboard designed to manage and monitor [Podsync](https://github.com/mxpv/podsync) — a service that turns YouTube channels and playlists into customized podcast feeds.
+<p align="center">
+  <a href="https://badugisoft.github.io/podsync-manager/"><strong>🌐 Project Website</strong></a> ·
+  <a href="https://github.com/badugisoft/podsync-manager/releases/latest"><strong>📦 Latest Release</strong></a> ·
+  <a href="#preview">Preview</a> ·
+  <a href="#key-features">Features</a> ·
+  <a href="#getting-started">Installation</a> ·
+  <a href="#faq--troubleshooting">FAQ</a> ·
+  <a href="#contributing">Contributing</a>
+</p>
 
-Without manually editing complex `config.toml` files, you can create and modify podcast feeds through an intuitive web interface, monitor Docker container status with live SSE log streaming, review configuration diffs before deployment, play audio episodes directly, and calculate cloud storage usage.
+**Podsync Manager** is a lightweight, self-hosted Go + Svelte 5 web dashboard designed to manage and monitor [Podsync](https://github.com/mxpv/podsync) — a service that turns YouTube, Vimeo, SoundCloud, and Twitch channels or playlists into podcast feeds.
 
----
-
-## 📸 Preview
-
-![Podsync Manager Dashboard Preview](docs/images/dashboard-preview.svg)  
-*(Sensitive credentials and private tokens are masked for security)*
-
----
-
-## ✨ Key Features
-
-### 1. 🎛️ Feed Lifecycle Management
-- **Intuitive Feed Form**: Register podcast feeds easily with just a YouTube playlist or channel URL.
-- **YouTube Optimized Presets**:
-  - `format 18` (360p pre-merged single stream) preset: Zero server CPU re-encoding load, lightning-fast downloads, and minimal disk footprint.
-  - Multi-language audio track priority specification (`-S lang:en/ko/ja`).
-  - Android client emulation (`--extractor-args youtube:player-client=android`) to avoid YouTube bot bans and rate-limits.
-  - Automatic exclusion of ongoing live streams (`--match-filter !is_live`).
-- **Storage Conservation (Retention & Filters)**:
-  - Automatic retention policy keeping only the latest $N$ episodes (`clean.keep_last`).
-  - Minimum duration filter to exclude Shorts and short teasers (`filters.min_duration`).
-  - Regex-based title and description inclusion/exclusion filters.
-- **Atomic File Operations**: Safe writing to temporary files (`.tmp`) followed by atomic rename, accompanied by automatic `.bak` backups and one-click rollback.
-- **Live TOML Generator & Change Highlighting**: Live preview and one-click clipboard copying of TOML snippets with real-time `Modified` visual badges on changed fields.
-
-### 2. 🐳 Docker Container Control & Safe Deployment
-- **Explicit Apply & Restart**: Saving configurations does not interrupt running services immediately; inspect changes and restart explicitly.
-- **Config Diff Review & In-Place Editor**:
-  - Side-by-side visual diff modal comparing running container configurations against staged changes.
-  - Direct in-place TOML editor with syntax validation before applying.
-- **Real-Time Container Status**: Real-time container health monitoring (`Running`, `Stopped`, `Restarting`) via the Docker socket.
-
-### 3. 📜 Real-Time SSE Log Streaming
-- **Timestamp & Log Level Badges**: Precise `YYYY-MM-DD HH:mm:ss` formatting with colored severity tags (`INFO`, `WARN`, `ERROR`).
-- **Compact Attribute Formatting**: Inline contextual metadata (`feed_id`, `error`) maximizes readable screen space.
-- **Smart Tools**: Level filters, keyword search, auto-scroll locking, and log buffer clearing with tail line limit selectors (100–1000 lines).
-
-### 4. ☁️ S3-Compatible Cloud Storage & Media Player
-- **Vendor-Neutral Storage**: Full compatibility with AWS S3, Cloudflare R2, MinIO, Wasabi, and local disk volumes.
-- **Automatic Container Credential Detection**: Automatically discovers S3 access keys and endpoints directly from the running Podsync container environment.
-- **Web Audio Player**: Stream podcast episodes with playback speed controls (1.0x–2.0x) and ±15s skip navigation.
-- **On-Demand Storage Calculation**: Calculates total bucket usage and percentage against free tiers on click to eliminate recurring API querying costs.
-
-### 5. 🌐 Multi-Language (i18n) Support
-- **7 Supported Locales**: English (🇺🇸 default), Korean (🇰🇷), Japanese (🇯🇵), Simplified Chinese (🇨🇳), Spanish (🇪🇸), French (🇫🇷), and German (🇩🇪).
-- **Client Persistence**: Seamless switching from the top navigation with automatic `localStorage` synchronization.
-- **Smart Formatting**: Pluralization rules, localized date formatting, and live countdown timers customized per language.
-
-### 6. 🔐 Security & Administration
-- **Session Authentication**: Secure administrator authentication powered by environment variables (`ADMIN_USERNAME`, `ADMIN_PASSWORD`).
-- **HTTP-Only Cookies**: Protected session cookies preventing unauthorized access.
+Without manually editing `config.toml`, you can manage feeds, inspect side-by-side TOML diffs before restarting containers, stream real-time SSE Docker logs, calculate S3 storage usage, and play audio episodes directly in your browser.
 
 ---
 
-## 🚀 Getting Started
+## Preview
+
+![Podsync Manager Dashboard Preview](assets/dashboard-preview.svg)  
+*(Sensitive credentials and private tokens are masked automatically for security.)*
+
+---
+
+## Key Features
+
+### 1. Feed Lifecycle & YouTube Optimization
+- **Intuitive Feed Form**: Create, edit, or clone podcast feeds from YouTube, Vimeo, SoundCloud, or Twitch URLs, and preview filter results before saving.
+- **YouTube Presets**:
+  - `format 18` (360p pre-merged single stream): Zero server CPU re-encoding, fast downloads, and minimal disk footprint.
+  - Multi-language audio track priority (`-S lang:en/ko/ja`).
+  - Android client emulation (`--extractor-args youtube:player-client=android`) to reduce bot detection and rate-limits.
+  - Automatic exclusion of live streams (`!is_live`) and dedicated YouTube Shorts policies.
+- **Retention & Filters**: `clean.keep_last`, `filters.min_duration` / `max_duration`, and regex title/description rules.
+- **Atomic File Operations**: Temporary `.tmp` writes followed by atomic `rename`, with automatic `.bak` backups and one-click rollback.
+
+### 2. Docker Container Control & Diff Review
+- **Explicit Apply & Restart**: Saving configurations does not interrupt running services immediately; inspect changes first.
+- **Side-by-Side Diff & In-Place TOML Editor**: Compare staged changes against the running container or edit raw TOML with syntax validation.
+- **Real-Time Container Status**: Live container health monitoring (`Running`, `Stopped`, `Restarting`) via the Docker socket.
+
+### 3. Real-Time SSE Log Streaming
+- **Timestamp & Severity Badges**: Formatted `YYYY-MM-DD HH:mm:ss` logs with `INFO`, `WARN`, and `ERROR` tags.
+- **Filtering & Views**: Level filters, keyword search, tail line selectors (100–1000 lines), auto-scroll lock, and Structured/Raw views.
+
+### 4. S3-Compatible Cloud Storage & Web Audio Player
+- **Vendor-Neutral Storage**: Works with AWS S3, Cloudflare R2, MinIO, Wasabi, and local disk volumes.
+- **Auto Credential Detection**: Discovers S3 keys and endpoints directly from the running Podsync container environment.
+- **In-Browser Audio Player**: Stream episodes with `1.0x–2.0x` playback speed controls and `±15s` skip buttons.
+- **On-Demand Storage Calculation**: Queries bucket usage only when requested to avoid recurring API costs.
+
+### 5. 7-Language Localization & Adaptive Themes
+- **7 Supported Locales**: English, Korean, Japanese, Simplified Chinese, Spanish, French, and German with `localStorage` persistence.
+- **Light / Dark / System Themes**: Zero-flicker theme initialization.
+
+### 6. Self-Hosted Privacy & Security
+- **100% Local Execution & Zero Telemetry**: Runs entirely in your own infrastructure; no analytics, tracking, or external telemetry are collected.
+- **Protected Access**: HTTP-only session cookies (`ADMIN_USERNAME`, `ADMIN_PASSWORD`, `SESSION_SECRET`) and masked environment-injected credentials. See [SECURITY.md](SECURITY.md) for details.
+
+---
+
+## Getting Started
 
 ### Docker Compose (Recommended)
 
-Add Podsync Manager alongside Podsync in your `docker-compose.yml`:
+Add `podsync-manager` alongside `podsync` in your `docker-compose.yml`:
 
 ```yaml
-version: '3.8'
-
 services:
   podsync:
     image: mxpv/podsync:latest
     container_name: podsync
     restart: unless-stopped
     volumes:
-      # Mount configuration folder (contains config.toml)
       - ./config:/app/config
       - ./data:/app/data
     environment:
@@ -99,9 +108,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      # Mount Podsync configuration directory (Directory mapping is strongly recommended)
+      # Mount parent config folder (strongly recommended for atomic writes)
       - ./config:/app/config
-      # Mount Docker socket for container control and log streaming
+      # Mount Docker socket for container control and SSE log streaming
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - PODSYNC_CONFIG_PATH=/app/config/config.toml
@@ -114,9 +123,6 @@ services:
       - AWS_SECRET_ACCESS_KEY=your_secret_access_key
 ```
 
-> [!TIP]
-> **Directory Mapping Recommended**: Always mount the parent configuration **folder** (`-v ./config:/app/config`) rather than an isolated single file (`config.toml`). This allows atomic writes (`.tmp` -> `rename`) and automated `.bak` backups to take place on the exact same host filesystem without cross-device link errors (`EXDEV`) or inode decoupling. (Podsync Manager also includes an in-place fallback if a single file is mounted).
-
 Run the stack:
 
 ```bash
@@ -124,8 +130,6 @@ docker compose up -d
 ```
 
 ### Docker Run CLI
-
-Alternatively, run Podsync Manager directly with Docker CLI:
 
 ```bash
 docker run -d \
@@ -139,63 +143,99 @@ docker run -d \
 
 Access the dashboard at `http://localhost:3000`.
 
----
-
-## ⚙️ Environment Variables
-
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `PORT` | Web service port | `3000` |
-| `PODSYNC_CONFIG_PATH` | Path to Podsync's `config.toml` | `config/config.toml` (`/app/config/config.toml` in container) |
-| `PODSYNC_CONTAINER_NAME` | Name of the Podsync Docker container to manage | `podsync` |
-| `PODSYNC_YOUTUBE_API_KEY` | YouTube Data API v3 Key for episode preview and metadata lookup | `""` |
-| `DOCKER_SOCKET` | Path to Docker unix socket | `/var/run/docker.sock` |
-| `ADMIN_USERNAME` | Administrator username | `admin` |
-| `ADMIN_PASSWORD` | Administrator password | *(Recommended to set)* |
-| `SESSION_SECRET` | Secret key used to sign session cookies | *(Auto-generated if unset)* |
-| `AWS_ACCESS_KEY_ID` | S3 / Cloudflare R2 access key for storage calculation | `""` |
-| `AWS_SECRET_ACCESS_KEY` | S3 / Cloudflare R2 secret key for storage calculation | `""` |
-
----
-
-## 🛠️ Local Development
-
-Podsync Manager runs as a lightweight Go single binary with an embedded Svelte 5 SPA. It also supports local `.env` files for development:
+### Local Single-Binary Build
 
 ```bash
-# 1. Clone repository
 git clone https://github.com/badugisoft/podsync-manager.git
 cd podsync-manager
-
-# 2. Configure local environment
 cp .env.example .env
-# Edit .env with your local settings (e.g. PODSYNC_CONFIG_PATH, PODSYNC_YOUTUBE_API_KEY)
-
-# 3. Install frontend dependencies and build static assets
-npm install
-npm run build
-
-# 4. Build and run Go single binary
+npm install && npm run build
 go build -o podsync-manager ./cmd/server
 ./podsync-manager
 ```
 
 ---
 
-## 🤖 Built with Google Antigravity
+## Environment Variables
 
-This project was architected and developed in collaboration with **[Google Antigravity](https://deepmind.google/technologies/gemini/)**, Google DeepMind's advanced agentic coding environment.
-
-- **Architecture Design**: Modular full-stack design built on SvelteKit 2, Svelte 5 runes, TypeScript, and Tailwind CSS.
-- **Iterative Implementation**:
-  - **Core**: Session authentication, `smol-toml` parsing/serialization, atomic file writes with `.tmp` and `.bak` backups.
-  - **Docker Integration**: Socket integration via `dockerode`, explicit restart pipeline, real-time SSE log streaming.
-  - **Storage & Media**: Vendor-neutral S3 SDK integration, direct-streaming audio player, on-demand usage metering.
-  - **Packaging & i18n**: Multi-stage production Dockerfile, 7-language reactive i18n architecture, and visual field change indicators.
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `PORT` | Web service port | `3000` |
+| `PODSYNC_CONFIG_PATH` | Path to Podsync's `config.toml` | `config/config.toml` (`/app/config/config.toml` in container) |
+| `PODSYNC_CONTAINER_NAME` | Name of the Podsync Docker container to manage | `podsync` |
+| `PODSYNC_YOUTUBE_API_KEY` | YouTube Data API v3 Key for episode preview | `""` |
+| `DOCKER_SOCKET` | Path to Docker unix socket | `/var/run/docker.sock` |
+| `ADMIN_USERNAME` | Administrator username | `admin` |
+| `ADMIN_PASSWORD` | Administrator password | *(Recommended to set)* |
+| `SESSION_SECRET` | Secret key used to sign session cookies | *(Auto-generated if unset)* |
+| `AWS_ACCESS_KEY_ID` | S3 / Cloudflare R2 access key | `""` |
+| `AWS_SECRET_ACCESS_KEY` | S3 / Cloudflare R2 secret key | `""` |
 
 ---
 
-## 📄 License
+## Repository Structure
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.  
+```text
+podsync-manager/
+├── cmd/server/             # Go server entrypoint
+├── internal/               # Go backend packages & embedded SPA dist
+├── src/                    # Svelte 5 / SvelteKit frontend & 7-locale i18n
+├── site/                   # Multi-language GitHub Pages landing site
+├── assets/                 # Shared preview graphics & icons
+├── docs/                   # Localized README.<lang>.md & architecture docs
+├── .github/
+│   ├── workflows/          # Docker GHCR publish & GitHub Pages deploy
+│   ├── ISSUE_TEMPLATE/     # Bug report & feature request templates
+│   └── PULL_REQUEST_TEMPLATE.md
+├── CONTRIBUTING.md         # Contribution & build guide
+├── SECURITY.md             # Security & privacy policy
+├── LICENSE                 # MIT License
+└── Dockerfile              # Multi-stage Alpine (~35MB) container build
+```
+
+---
+
+## FAQ & Troubleshooting
+
+<details>
+<summary><strong>Why should I mount the ./config directory instead of config.toml directly?</strong></summary>
+
+Mounting the parent directory (`-v ./config:/app/config`) allows Podsync Manager to write temporary `.tmp` files, perform atomic `rename` operations, and create `.bak` backups on the same host filesystem without `EXDEV` cross-device link errors or stale bind-mount inodes.
+</details>
+
+<details>
+<summary><strong>Why does Podsync Manager need access to /var/run/docker.sock?</strong></summary>
+
+Docker socket access is used strictly on your host to monitor container status, stream live SSE logs, restart the Podsync container after Diff review, and auto-detect S3 environment credentials configured on the Podsync container.
+</details>
+
+<details>
+<summary><strong>How does the YouTube format 18 preset avoid CPU load and bot blocks?</strong></summary>
+
+`format 18` downloads a pre-muxed 360p stream directly from YouTube without server-side `ffmpeg` re-encoding. Combined with Android client emulation (`--extractor-args youtube:player-client=android`), it speeds up downloads and helps avoid rate-limit blocks.
+</details>
+
+<details>
+<summary><strong>How are S3 credentials and API keys protected?</strong></summary>
+
+S3 keys and platform API tokens can be injected via environment variables and are masked in the web UI. Credentials are never sent outside your host and your configured S3 endpoint. See [SECURITY.md](SECURITY.md).
+</details>
+
+<details>
+<summary><strong>Does Podsync Manager collect any telemetry?</strong></summary>
+
+No. Podsync Manager is 100% self-hosted and collects zero telemetry, tracking, or usage analytics.
+</details>
+
+---
+
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+
+---
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.  
 Podsync is created and maintained by [mxpv](https://github.com/mxpv/podsync).

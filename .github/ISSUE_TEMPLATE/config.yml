@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Releases & Changelog
+    url: https://github.com/badugisoft/podsync-manager/releases
+    about: Check the latest releases and download binaries or Docker tags.
+  - name: Documentation & Project Website
+    url: https://badugisoft.github.io/podsync-manager/
+    about: Browse setup guides, features, and FAQ on the Podsync Manager website.

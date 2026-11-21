@@ -2,49 +2,57 @@
 
 This document defines guidelines, milestones, and principles for AI coding agents developing `podsync-manager`.  
 For detailed technical architecture and specifications, refer to [DESIGN.md](file:///Users/badugiss/work/badugisoft/podsync-manager/DESIGN.md).
-For future Golang single-binary migration plans, refer to [GOLANG_MIGRATION_PLAN.md](file:///Users/badugiss/work/badugisoft/podsync-manager/docs/GOLANG_MIGRATION_PLAN.md).
+For Golang single-binary architecture history, refer to [GOLANG_MIGRATION_PLAN.md](file:///Users/badugiss/work/badugisoft/podsync-manager/docs/GOLANG_MIGRATION_PLAN.md).
 
 ---
 
 ## 1. Core Technology Stack
 
-- **Framework**: SvelteKit 2 / Svelte 5 (TypeScript, Tailwind CSS)
-- **Adapter**: `@sveltejs/adapter-node`
-- **TOML**: `smol-toml`
-- **Container Control**: `dockerode`
-- **Cloud Storage**: `@aws-sdk/client-s3` (S3-compatible and local disk storage)
-- **Internationalization (i18n)**: 7 supported locales (English, Korean, Japanese, Chinese, Spanish, French, German)
-- **Diff & In-Place Editor**: `diff`, Side-by-Side comparison and live TOML editing
+- **Backend**: Go (`chi/v5`, `go-toml/v2`, Docker SDK, AWS SDK for Go v2) serving an embedded Svelte 5 SPA (`internal/web/dist`)
+- **Frontend**: SvelteKit 2 / Svelte 5 (TypeScript, Tailwind CSS 4, `@sveltejs/adapter-static`)
+- **Container Control**: Docker socket integration (`/var/run/docker.sock`)
+- **Cloud Storage**: S3-compatible object storage (AWS S3, Cloudflare R2, MinIO, Wasabi) and local disk storage
+- **Internationalization (i18n)**: 7 supported locales (`en`, `ko`, `ja`, `zh`, `es`, `fr`, `de`) across `src/lib/i18n/locales/`, `site/i18n.js`, and `docs/README.<lang>.md`
+- **Diff & In-Place Editor**: Side-by-side TOML diff comparison and live TOML editing
 
 ---
 
 ## 2. Milestone Roadmap
 
-- [x] **Step 1 (Core)**: Administrator authentication (login/session), `config.toml` parsing/serialization (`smol-toml`), feed CRUD with atomic (`.tmp` -> `rename`) writes, `.bak` auto-backup and rollback.
-- [x] **Step 2 (Docker)**: Dockerode socket integration, real-time container status monitoring, explicit restart deployment, SSE live log streaming, Config Diff review modal.
+- [x] **Step 1 (Core)**: Administrator authentication (login/session), `config.toml` parsing/serialization, feed CRUD with atomic (`.tmp` -> `rename`) writes, `.bak` auto-backup and rollback.
+- [x] **Step 2 (Docker)**: Docker socket integration, real-time container status monitoring, explicit restart deployment, SSE live log streaming, Config Diff review modal.
 - [x] **Step 3 (S3 Media & Storage)**: S3 SDK integration for episode listing, in-browser audio streaming player, cost-optimized manual storage calculation with container credential auto-detection.
-- [x] **Step 4 (Packaging & Dockerfile)**: Multi-stage Dockerfile build specification and deployment validation.
+- [x] **Step 4 (Packaging & Dockerfile)**: Multi-stage Dockerfile build specification (~35MB Alpine image) and deployment validation.
 - [x] **Step 5 (Multi-Language & UX Refinement)**:
   - 7-locale (EN, KO, JA, ZH, ES, FR, DE) modular i18n architecture.
   - Dark / Light / System theme modes with zero-flicker pre-render initialization and smooth transitions.
   - Smart pluralization, localized date formatting, and live countdown timers.
   - Comprehensive form internationalization across global settings and feed editor.
   - Live field modification badges and visual diff indicators.
-  - Modern documentation and SVG preview synchronization.
+  - Multi-language documentation (`docs/README.<lang>.md`), promotional landing page (`site/`), and community templates (`.github/`, `CONTRIBUTING.md`, `SECURITY.md`).
 
 ---
 
-## 3. Agent Operating Principles
+## 3. Repository Documentation & Community Files
+
+- **Root `README.md`**: Kept in English with dynamic badges, language switcher bar, preview screenshot, privacy summary, and collapsible FAQ.
+- **Localized `docs/README.<lang>.md`**: Synchronized translations (`ko`, `ja`, `zh`, `es`, `fr`, `de`) with `../` relative paths and localized `#anchor` links.
+- **Promotional Site (`site/`)**: Zero-dependency 7-language GitHub Pages site (`site/index.html`, `site/styles.css`, `site/i18n.js`) deployed via `.github/workflows/pages.yml`.
+- **Community Health**: `CONTRIBUTING.md`, `SECURITY.md`, `LICENSE`, `.github/ISSUE_TEMPLATE/`, and `.github/PULL_REQUEST_TEMPLATE.md`.
+
+---
+
+## 4. Agent Operating Principles
 
 - **Prior Notification**: Always clearly state what action will be taken before creating, editing files, or running commands.
 - **Repository Modification Approval**: Never execute commits, pushes, or releases without explicit prior user confirmation.
 - **English Git & Release Messages**: Always write all Git commit messages, release titles, and release notes in English.
 - **Concise Communication**: Keep answers brief, direct, and strictly focused on what the user asks.
-- **Automatic Server Execution on Task Completion**: Whenever code or configuration changes are completed, always build and run/restart the test server following the `run-dev-server` skill workflow so the user can verify changes immediately at `http://localhost:3000/`.
+- **Automatic Server Execution on Task Completion**: Whenever app code or configuration changes are completed, always build and run/restart the test server following the `run-dev-server` skill workflow so the user can verify changes immediately at `http://localhost:3000/`.
 
 ---
 
-## 4. Server Startup & Execution Protocol
+## 5. Server Startup & Execution Protocol
 
 When launching or restarting the local development/runtime server, always follow these rules in order:
 
