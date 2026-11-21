@@ -48,12 +48,12 @@
     <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <!-- Logo & Brand -->
-        <div class="flex items-center gap-6">
-          <a href="/" class="flex items-center gap-2.5 font-bold text-lg text-white group">
-            <div class="w-9 h-9 rounded-xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-105 transition-transform">
-              <Radio class="w-5 h-5 text-indigo-400" />
+        <div class="flex items-center gap-6 min-w-0">
+          <a href="/" class="flex items-center gap-2 sm:gap-2.5 font-bold text-base sm:text-lg text-white group min-w-0">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-105 transition-transform shrink-0">
+              <Radio class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" />
             </div>
-            <span>Podsync Manager</span>
+            <span class="truncate">Podsync Manager</span>
           </a>
 
           <!-- Nav Links -->
@@ -94,7 +94,7 @@
         </div>
 
         <!-- Right: Status, Language Selector, Theme Toggle, Restart, Logout -->
-        <div class="flex items-center gap-2 sm:gap-3">
+        <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
           <!-- Theme Toggle -->
           <ThemeToggle />
 
@@ -192,6 +192,42 @@
           </button>
         </div>
       </div>
+
+      <!-- Mobile Nav Links -->
+      <nav class="flex md:hidden items-center gap-1 border-t border-slate-800/80 px-3 py-1.5 overflow-x-auto">
+        <a
+          href="/"
+          title={t('nav.feedsTooltip')}
+          class="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 whitespace-nowrap shrink-0 transition-colors {$page.url.pathname === '/' || $page.url.pathname.startsWith('/feeds') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
+        >
+          <Rss class="w-3.5 h-3.5 shrink-0" />
+          <span>{t('nav.feeds')}</span>
+        </a>
+        <a
+          href="/episodes"
+          title={t('nav.episodesTooltip')}
+          class="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 whitespace-nowrap shrink-0 transition-colors {$page.url.pathname.startsWith('/episodes') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
+        >
+          <ListMusic class="w-3.5 h-3.5 shrink-0" />
+          <span>{t('nav.episodes')}</span>
+        </a>
+        <a
+          href="/logs"
+          title={t('nav.logsTooltip')}
+          class="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 whitespace-nowrap shrink-0 transition-colors {$page.url.pathname.startsWith('/logs') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
+        >
+          <Terminal class="w-3.5 h-3.5 shrink-0" />
+          <span>{t('nav.logs')}</span>
+        </a>
+        <a
+          href="/settings"
+          title={t('nav.settingsTooltip')}
+          class="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 whitespace-nowrap shrink-0 transition-colors {$page.url.pathname.startsWith('/settings') ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}"
+        >
+          <Sliders class="w-3.5 h-3.5 shrink-0" />
+          <span>{t('nav.settings')}</span>
+        </a>
+      </nav>
 
       <!-- Message Alert Toast -->
       {#if restartMessage}
