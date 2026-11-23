@@ -13,6 +13,8 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
     permissions:
       contents: read
       packages: write
@@ -57,6 +59,7 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref_type == 'tag' }}
 
       - name: Build and push Docker image
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -83,13 +86,16 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
           REPO: ${{ github.repository }}
+          DIGEST: ${{ needs.build-and-push.outputs.digest }}
         run: |
           python3 - <<'PY'
           import os, re, subprocess
 
           tag = os.environ["TAG"]
           repo = os.environ["REPO"]
+          digest = os.environ.get("DIGEST", "").strip()
           ver = tag.lstrip("v")
+          pkg_name = repo.split("/")[-1]
 
           tags = subprocess.check_output(["git", "tag", "--sort=-v:refname"], text=True).splitlines()
           prev_tag = ""
@@ -106,7 +112,20 @@ jobs:
               if m:
                   body = m.group(1).strip()
 
+          docker_section = (
+              "### Docker Image\n"
+              f"- **Pull**: `docker pull ghcr.io/{repo}:{ver}`\n"
+              "- **Platforms**: `linux/amd64`, `linux/arm64`\n"
+              f"- **Package**: https://github.com/{repo}/pkgs/container/{pkg_name}"
+          )
+          if digest:
+              docker_section += f"\n- **Digest**: `{digest}`"
+
+          with open("docker_section.md", "w", encoding="utf-8") as f:
+              f.write(docker_section + "\n")
+
           if body:
+              body += f"\n\n{docker_section}"
               if prev_tag:
                   body += f"\n\n**Full Changelog**: https://github.com/{repo}/compare/{prev_tag}...{tag}"
               with open("release_notes.md", "w", encoding="utf-8") as f:
@@ -127,4 +146,7 @@ jobs:
             gh release create "$TAG" --title "$TAG" --notes-file release_notes.md
           else
             gh release create "$TAG" --title "$TAG" --generate-notes
+            BODY=$(gh release view "$TAG" --json body -q .body)
+            printf "%s\n\n%s\n" "$BODY" "$(cat docker_section.md)" > release_notes.md
+            gh release edit "$TAG" --notes-file release_notes.md
           fi
