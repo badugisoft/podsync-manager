@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.2.11] - 2026-11-23
+
 ### Added
 - Full-page mock screenshots for all 10 application views in `assets/screenshots/` with all collapsible sections expanded.
 - Multi-language GitHub Pages landing site (`site/`) and synchronized localized READMEs (`docs/README.<lang>.md`).
@@ -94,7 +96,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release of Podsync Manager.
 
-[Unreleased]: https://github.com/badugisoft/podsync-manager/compare/v0.2.10...HEAD
+[Unreleased]: https://github.com/badugisoft/podsync-manager/compare/v0.2.11...HEAD
+[v0.2.11]: https://github.com/badugisoft/podsync-manager/compare/v0.2.10...v0.2.11
 [v0.2.10]: https://github.com/badugisoft/podsync-manager/compare/v0.2.9...v0.2.10
 [v0.2.9]: https://github.com/badugisoft/podsync-manager/compare/v0.2.8...v0.2.9
 [v0.2.8]: https://github.com/badugisoft/podsync-manager/compare/v0.2.7...v0.2.8
