@@ -14,7 +14,7 @@ This skill guides the formal release process for `podsync-manager`, ensuring ver
   ```bash
   git status
   ```
-- Identify the latest version tag:
+- Identify the latest version tag and review `CHANGELOG.md` (`## [Unreleased]`):
   ```bash
   git tag -l --sort=-v:refname | head -n 5
   ```
@@ -40,34 +40,34 @@ Always verify the complete build pipeline according to `AGENTS.md`:
    go build -o podsync-manager ./cmd/server
    ```
 
-### 4. Draft Release Notes & Seek User Confirmation
-- Prepare the release title and release notes in **English** summarizing all changes since the previous tag (all release titles and notes MUST be written in English):
-  - New features / enhancements
-  - Bug fixes & architectural cleanups
-  - UI / Localization updates
-- **MANDATORY**: Present the target version (`vX.Y.Z`), release title, release notes, and planned actions to the user and obtain explicit approval before publishing.
+### 4. Update CHANGELOG.md & Seek User Confirmation
+- Review commits since the previous tag (`git log <prev_tag>..HEAD --oneline`).
+- Update `CHANGELOG.md` in **English** (Keep a Changelog format):
+  - Move items from `## [Unreleased]` into a new `## [vX.Y.Z] - YYYY-MM-DD` section (categorized under `Added`, `Changed`, `Fixed`, etc.), and leave `## [Unreleased]` empty for future work.
+  - Update the comparison links at the bottom of `CHANGELOG.md`:
+    ```markdown
+    [Unreleased]: https://github.com/badugisoft/podsync-manager/compare/vX.Y.Z...HEAD
+    [vX.Y.Z]: https://github.com/badugisoft/podsync-manager/compare/<prev_tag>...vX.Y.Z
+    ```
+- **MANDATORY**: Present the target version (`vX.Y.Z`), `CHANGELOG.md` diff, and planned actions to the user and obtain explicit approval before committing or tagging.
 
 ### 5. Execute Release
 Once approved:
-1. Commit the version bump:
+1. Commit the version bump, `CHANGELOG.md`, and any updated `internal/web/dist` assets:
    ```bash
-   git add package.json internal/api/handlers_system.go
+   git add package.json internal/api/handlers_system.go CHANGELOG.md
    git commit -m "chore: bump version to vX.Y.Z"
    git push origin main
    ```
-2. Create and push the Git tag (triggers GitHub Actions `docker-publish.yml`):
+2. Create and push the Git tag (triggers `.github/workflows/release.yml` to build/push Docker images and then automatically create the GitHub Release from `CHANGELOG.md` with a Full Changelog comparison link):
    ```bash
    git tag vX.Y.Z
    git push origin vX.Y.Z
    ```
-3. Publish GitHub Release via `gh`:
-   ```bash
-   gh release create vX.Y.Z --title "vX.Y.Z - <Title>" --notes "<Notes>"
-   ```
 
 ### 6. Monitor CI/CD Pipeline
-- Verify that the GitHub Actions workflow was triggered by the tag push:
+- Verify that the `Release & Publish Docker Image` workflow (`release.yml`) was triggered by the tag push:
   ```bash
-  gh run list -L 1
+  gh run list -L 2
   ```
-- Report the release URL and workflow status to the user.
+- Report the release URL (including the compare link) and workflow status to the user.

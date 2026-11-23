@@ -13,12 +13,13 @@ This skill standardizes the day-to-day commit and push process for `podsync-mana
 - Run `git status` and `git diff` to review all modified, untracked, and deleted files.
 - **Safety Rule**: Ensure sensitive files (such as `.env`, credentials, private keys, or `.tmp` files) are NOT staged or tracked.
 
-### 2. Verification & Type Checking
+### 2. Verification & Changelog Update
 - If frontend files (`src/`, `package.json`, etc.) or Go files were modified:
   ```bash
   npm run check
   ```
 - Ensure there are 0 errors and 0 warnings before proceeding.
+- For notable user-facing features, fixes, or documentation changes, add a concise English entry under `## [Unreleased]` in `CHANGELOG.md`. (If UI layout/routes changed, consider running the `update-screenshots` skill as well.)
 
 ### 3. Draft Commit Message & Seek User Approval
 - Formulate a clear, conventional commit message in **English** (e.g., `feat: ...`, `fix: ...`, `refactor: ...`, `docs: ...`). All commit messages MUST be written in English.
