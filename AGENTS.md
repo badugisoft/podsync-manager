@@ -44,6 +44,7 @@ For Golang single-binary architecture history, refer to [GOLANG_MIGRATION_PLAN.m
 
 ## 4. Agent Operating Principles
 
+- **Latest Source Verification**: Before starting any task, always check whether the local repository is up to date with `origin/main` (`git fetch`) and sync if behind before proceeding.
 - **Prior Notification**: Always clearly state what action will be taken before creating, editing files, or running commands.
 - **Repository Modification Approval**: Never execute commits, pushes, or releases without explicit prior user confirmation.
 - **English Git & Release Messages**: Always write all Git commit messages, release titles, and release notes in English.
