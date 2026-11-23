@@ -101,7 +101,7 @@ jobs:
           body = ""
           if os.path.exists("CHANGELOG.md"):
               text = open("CHANGELOG.md", encoding="utf-8").read()
-              pattern = rf"^## \[(?:v?{re.escape(ver)})\]\s*(?:-.*)?\n(.*?)(?=^## \[|\Z|^\[[^\]]+\]:\s*http)"
+              pattern = rf"^## \[(?:v?{re.escape(ver)})\][^\n]*\n(.*?)(?=^## \[|\Z|^\[[^\]]+\]:\s*http)"
               m = re.search(pattern, text, flags=re.MULTILINE | re.DOTALL)
               if m:
                   body = m.group(1).strip()
