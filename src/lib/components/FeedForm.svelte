@@ -248,6 +248,10 @@
       // yt-dlp 인자 파싱
       const args = targetFeed.youtube_dl_args || [];
       const remaining: string[] = [];
+      const parsedOrder: ('client' | 'match_filter' | 'format' | 'extra')[] = [];
+      const recordSlot = (slot: 'client' | 'match_filter' | 'format' | 'extra') => {
+        if (!parsedOrder.includes(slot)) parsedOrder.push(slot);
+      };
       langPref = 'none';
       customLang = '';
       playerClient = 'none';
@@ -269,6 +273,7 @@
           }
           i++;
         } else if (curr === '--extractor-args' && i + 1 < args.length && args[i + 1].startsWith('youtube:player-client=')) {
+          recordSlot('client');
           const c = args[i + 1].replace('youtube:player-client=', '');
           if (['android', 'ios', 'web'].includes(c)) {
             playerClient = c;
@@ -278,6 +283,7 @@
           }
           i++;
         } else if (curr === '--match-filter' && i + 1 < args.length) {
+          recordSlot('match_filter');
           const mf = args[i + 1];
           if (mf.includes('!is_live')) {
             excludeLive = true;
@@ -295,10 +301,12 @@
             .replace(/\s*&\s*&\s*/g, ' & ')
             .trim();
           if (cleaned) {
+            recordSlot('extra');
             remaining.push('--match-filter', cleaned);
           }
           i++;
         } else if (curr === '-f' && i + 1 < args.length) {
+          recordSlot('format');
           const f = args[i + 1];
           const langMatch = f.match(/\[language=([a-zA-Z_-]+)\]/);
           if (langMatch) {
@@ -325,10 +333,16 @@
           }
           i++;
         } else {
+          recordSlot('extra');
           remaining.push(curr);
         }
       }
 
+      for (const slot of ['client', 'match_filter', 'format', 'extra'] as const) {
+        recordSlot(slot);
+      }
+      ytArgsSnapshot = [...args];
+      ytSlotOrder = parsedOrder;
       extraArgs = remaining.join('\n');
     } else {
       // 기본 신규 피드 값
@@ -364,6 +378,8 @@
       shortsFilter = 'all';
       formatStream = '18';
       extraArgs = '';
+      ytArgsSnapshot = [];
+      ytSlotOrder = ['client', 'match_filter', 'format', 'extra'];
     }
 
     // 스냅샷 보존
@@ -400,7 +416,9 @@
       shortsFilter,
       formatStream,
       customFormatStream,
-      extraArgs
+      extraArgs,
+      ytArgs: ytArgsSnapshot,
+      ytSlotOrder
     };
   }
 
@@ -437,8 +455,13 @@
     shortsFilter: 'all' as 'exclude' | 'only' | 'all',
     formatStream: '18',
     customFormatStream: '',
-    extraArgs: ''
+    extraArgs: '',
+    ytArgs: [] as string[],
+    ytSlotOrder: ['client', 'match_filter', 'format', 'extra'] as ('client' | 'match_filter' | 'format' | 'extra')[]
   });
+
+  let ytArgsSnapshot: string[] = [];
+  let ytSlotOrder: ('client' | 'match_filter' | 'format' | 'extra')[] = ['client', 'match_filter', 'format', 'extra'];
 
   export function reset() {
     initFromFeed(feed);
@@ -543,13 +566,31 @@
 
   // yt-dlp 인자 최종 조합
   let combinedYtArgs = $derived(() => {
-    const lines: string[] = [];
+    const isYtModified =
+      isModifiedLangPref ||
+      isModifiedPlayerClient ||
+      isModifiedFormatStream ||
+      isModifiedExcludeLive ||
+      isModifiedShortsFilter ||
+      isModifiedExtraArgs ||
+      (formatStream === 'default' && langPref !== 'none' && (isModifiedFormat || isModifiedQuality));
+
+    if (feed && !isYtModified) {
+      return initial.ytArgs.join('\n');
+    }
+
     const selectedLang = langPref === 'custom' ? customLang : langPref;
+    const buckets: Record<'client' | 'match_filter' | 'format' | 'extra', string[]> = {
+      client: [],
+      match_filter: [],
+      format: [],
+      extra: []
+    };
 
     // 1. 플레이어 클라이언트
     const selectedClient = playerClient === 'custom' ? customClient : playerClient;
     if (selectedClient && selectedClient !== 'none') {
-      lines.push('--extractor-args', `youtube:player-client=${selectedClient}`);
+      buckets.client.push('--extractor-args', `youtube:player-client=${selectedClient}`);
     }
     // 2. 필터 조합 (--match-filter)
     const matchFilters: string[] = [];
@@ -562,28 +603,28 @@
       matchFilters.push('original_url*=/shorts/');
     }
     if (matchFilters.length > 0) {
-      lines.push('--match-filter', matchFilters.join(' & '));
+      buckets.match_filter.push('--match-filter', matchFilters.join(' & '));
     }
     // 3. 스트림 포맷 최적화 및 언어 필터 (-f)
     if (formatStream === '18') {
-      lines.push('-f', '18');
+      buckets.format.push('-f', '18');
     } else if (formatStream === 'bestaudio') {
-      lines.push('-f', selectedLang && selectedLang !== 'none' ? `bestaudio[language=${selectedLang}]/bestaudio` : 'ba/b');
+      buckets.format.push('-f', selectedLang && selectedLang !== 'none' ? `bestaudio[language=${selectedLang}]/bestaudio` : 'ba/b');
     } else if (formatStream === 'custom' && customFormatStream.trim()) {
-      lines.push('-f', customFormatStream.trim());
+      buckets.format.push('-f', customFormatStream.trim());
     } else if (selectedLang && selectedLang !== 'none') {
       // formatStream === 'default' 이고 언어가 지정된 경우 언어 필터 스트림 적용
       if (format === 'audio') {
         if (quality === 'low') {
-          lines.push('-f', `worstaudio[language=${selectedLang}]/worstaudio`);
+          buckets.format.push('-f', `worstaudio[language=${selectedLang}]/worstaudio`);
         } else {
-          lines.push('-f', `bestaudio[language=${selectedLang}]/bestaudio`);
+          buckets.format.push('-f', `bestaudio[language=${selectedLang}]/bestaudio`);
         }
       } else {
         if (quality === 'low') {
-          lines.push('-f', `worstvideo[ext=mp4]+worstaudio[language=${selectedLang}]/worst`);
+          buckets.format.push('-f', `worstvideo[ext=mp4]+worstaudio[language=${selectedLang}]/worst`);
         } else {
-          lines.push('-f', `bestvideo[ext=mp4]+bestaudio[language=${selectedLang}]/best`);
+          buckets.format.push('-f', `bestvideo[ext=mp4]+bestaudio[language=${selectedLang}]/best`);
         }
       }
     }
@@ -591,8 +632,13 @@
     if (extraArgs.trim()) {
       for (const arg of extraArgs.split('\n')) {
         const trimmed = arg.trim();
-        if (trimmed) lines.push(trimmed);
+        if (trimmed) buckets.extra.push(trimmed);
       }
+    }
+
+    const lines: string[] = [];
+    for (const slot of initial.ytSlotOrder) {
+      lines.push(...buckets[slot]);
     }
     return lines.join('\n');
   });

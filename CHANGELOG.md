@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Removed standalone `.github/workflows/docker-publish.yml` (merged into `.github/workflows/release.yml`).
 
+### Fixed
+- Preserved original `youtube_dl_args` order and unmodified arguments when saving feed edits in `FeedForm.svelte`.
+
 ## [v0.2.10] - 2026-11-21
 
 ### Fixed
