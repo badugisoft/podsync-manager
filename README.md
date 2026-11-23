@@ -39,8 +39,33 @@ Without manually editing `config.toml`, you can manage feeds, inspect side-by-si
 
 ## Preview
 
-![Podsync Manager Dashboard Preview](assets/dashboard-preview.svg)  
-*(Sensitive credentials and private tokens are masked automatically for security.)*
+![Podsync Manager Dashboard Preview](assets/screenshots/dashboard.png)  
+*(All screenshots use mock data; sensitive credentials and private tokens are masked automatically for security.)*
+
+<details>
+<summary>📸 View All Page Screenshots (10 pages)</summary>
+
+| Dashboard | Feed Detail |
+| :---: | :---: |
+| ![Dashboard](assets/screenshots/dashboard.png) | ![Feed Detail](assets/screenshots/feed-detail.png) |
+
+| New Feed (All Sections Expanded) | Edit Feed (All Sections Expanded) |
+| :---: | :---: |
+| ![New Feed](assets/screenshots/feed-new.png) | ![Edit Feed](assets/screenshots/feed-edit.png) |
+
+| All Episodes | Episode Audio Player |
+| :---: | :---: |
+| ![All Episodes](assets/screenshots/episodes.png) | ![Episode Audio Player](assets/screenshots/episode-player.png) |
+
+| Real-Time Container Logs | Global Settings (All Sections Expanded) |
+| :---: | :---: |
+| ![Container Logs](assets/screenshots/logs.png) | ![Global Settings](assets/screenshots/settings.png) |
+
+| Config Diff & Apply Modal | Login |
+| :---: | :---: |
+| ![Config Diff Modal](assets/screenshots/config-diff-modal.png) | ![Login](assets/screenshots/login.png) |
+
+</details>
 
 ---
 

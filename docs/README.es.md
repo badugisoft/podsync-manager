@@ -39,8 +39,33 @@ Sin editar manualmente `config.toml`, puedes gestionar canales, revisar diferenc
 
 ## Vista previa
 
-![Vista previa del panel de Podsync Manager](../assets/dashboard-preview.svg)  
-*(Las credenciales sensibles y los tokens privados se ocultan automáticamente por seguridad.)*
+![Vista previa del panel de Podsync Manager](../assets/screenshots/dashboard.png)  
+*(Todas las capturas usan datos ficticios; las credenciales sensibles y los tokens privados se ocultan automáticamente.)*
+
+<details>
+<summary>📸 Ver capturas de todas las páginas (10 páginas)</summary>
+
+| Panel | Detalle del feed |
+| :---: | :---: |
+| ![Panel](../assets/screenshots/dashboard.png) | ![Detalle del feed](../assets/screenshots/feed-detail.png) |
+
+| Nuevo feed (Todo expandido) | Editar feed (Todo expandido) |
+| :---: | :---: |
+| ![Nuevo feed](../assets/screenshots/feed-new.png) | ![Editar feed](../assets/screenshots/feed-edit.png) |
+
+| Todos los episodios | Reproductor de audio |
+| :---: | :---: |
+| ![Todos los episodios](../assets/screenshots/episodes.png) | ![Reproductor de audio](../assets/screenshots/episode-player.png) |
+
+| Registros en tiempo real | Ajustes globales (Todo expandido) |
+| :---: | :---: |
+| ![Registros](../assets/screenshots/logs.png) | ![Ajustes globales](../assets/screenshots/settings.png) |
+
+| Modal de Diff y reinicio | Iniciar sesión |
+| :---: | :---: |
+| ![Modal de Diff](../assets/screenshots/config-diff-modal.png) | ![Iniciar sesión](../assets/screenshots/login.png) |
+
+</details>
 
 ---
 

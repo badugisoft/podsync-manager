@@ -39,8 +39,33 @@
 
 ## 界面预览
 
-![Podsync Manager 仪表盘预览](../assets/dashboard-preview.svg)  
-*(出于安全考虑，敏感凭据与私有令牌会自动脱敏隐藏。)*
+![Podsync Manager 仪表盘预览](../assets/screenshots/dashboard.png)  
+*(所有截图均使用模拟数据拍摄，敏感凭据与私有令牌会自动脱敏隐藏。)*
+
+<details>
+<summary>📸 查看全部页面截图 (10 个页面)</summary>
+
+| 仪表盘 | 订阅源详情 |
+| :---: | :---: |
+| ![仪表盘](../assets/screenshots/dashboard.png) | ![订阅源详情](../assets/screenshots/feed-detail.png) |
+
+| 新建订阅源 (全部展开) | 编辑订阅源 (全部展开) |
+| :---: | :---: |
+| ![新建订阅源](../assets/screenshots/feed-new.png) | ![编辑订阅源](../assets/screenshots/feed-edit.png) |
+
+| 全部剧集 | 剧集音频播放器 |
+| :---: | :---: |
+| ![全部剧集](../assets/screenshots/episodes.png) | ![剧集音频播放器](../assets/screenshots/episode-player.png) |
+
+| 实时容器日志 | 全局设置 (全部展开) |
+| :---: | :---: |
+| ![容器日志](../assets/screenshots/logs.png) | ![全局设置](../assets/screenshots/settings.png) |
+
+| 配置差异 Diff 与重启弹窗 | 登录 |
+| :---: | :---: |
+| ![配置差异 Diff 弹窗](../assets/screenshots/config-diff-modal.png) | ![登录](../assets/screenshots/login.png) |
+
+</details>
 
 ---
 

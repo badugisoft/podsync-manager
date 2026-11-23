@@ -10,7 +10,7 @@
   <meta property="og:description" content="Self-hosted Go + Svelte 5 dashboard for managing Podsync feeds, TOML diffs, live SSE Docker logs, S3 cloud storage, and in-browser audio playback.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://badugisoft.github.io/podsync-manager/">
-  <meta property="og:image" content="https://badugisoft.github.io/podsync-manager/assets/dashboard-preview.svg">
+  <meta property="og:image" content="https://badugisoft.github.io/podsync-manager/assets/screenshots/dashboard.png">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -74,14 +74,28 @@
           <h2 data-i18n="preview_title">Dashboard Preview</h2>
           <p data-i18n="preview_subtitle">Responsive light and dark interface built with Svelte 5 and Tailwind CSS, embedded into a ~35MB Alpine container.</p>
         </div>
+        <div class="preview-tabs" role="tablist" aria-label="Page Screenshots">
+          <button class="preview-tab active" type="button" data-shot="dashboard.png" data-alt="Podsync Manager Dashboard Preview">Dashboard</button>
+          <button class="preview-tab" type="button" data-shot="feed-detail.png" data-alt="Feed Detail Page">Feed Detail</button>
+          <button class="preview-tab" type="button" data-shot="feed-new.png" data-alt="New Feed Form (Expanded)">New Feed</button>
+          <button class="preview-tab" type="button" data-shot="feed-edit.png" data-alt="Edit Feed Form (Expanded)">Edit Feed</button>
+          <button class="preview-tab" type="button" data-shot="episodes.png" data-alt="All Episodes List">Episodes</button>
+          <button class="preview-tab" type="button" data-shot="episode-player.png" data-alt="Episode Audio Player">Audio Player</button>
+          <button class="preview-tab" type="button" data-shot="logs.png" data-alt="Real-Time Container Logs">Logs</button>
+          <button class="preview-tab" type="button" data-shot="settings.png" data-alt="Global Settings (Expanded)">Settings</button>
+          <button class="preview-tab" type="button" data-shot="config-diff-modal.png" data-alt="Config Diff & Apply Modal">Config Diff</button>
+          <button class="preview-tab" type="button" data-shot="login.png" data-alt="Login Screen">Login</button>
+        </div>
         <figure class="preview-frame">
           <img
-            src="assets/dashboard-preview.svg"
-            onerror="this.onerror=null;this.src='../assets/dashboard-preview.svg';"
+            id="preview-img"
+            src="assets/screenshots/dashboard.png"
+            onerror="if(!this.dataset.fb){this.dataset.fb='1';this.src='../'+this.getAttribute('data-rel');}"
+            data-rel="assets/screenshots/dashboard.png"
             alt="Podsync Manager Dashboard Preview"
             fetchpriority="high"
-            width="1200"
-            height="720"
+            width="1440"
+            height="900"
           >
           <figcaption data-i18n="preview_caption">Sensitive credentials and private tokens are masked automatically.</figcaption>
         </figure>
@@ -279,6 +293,24 @@ go build -o podsync-manager ./cmd/server
       </div>
     </div>
   </footer>
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll('.preview-tab');
+      var img = document.getElementById('preview-img');
+      if (!tabs.length || !img) return;
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          tabs.forEach(function (t) { t.classList.remove('active'); });
+          tab.classList.add('active');
+          var rel = 'assets/screenshots/' + tab.dataset.shot;
+          delete img.dataset.fb;
+          img.setAttribute('data-rel', rel);
+          img.src = rel;
+          img.alt = tab.dataset.alt || 'Podsync Manager Screenshot';
+        });
+      });
+    })();
+  </script>
   <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "a9b0a6d79f624564bb0a40d5e89648f8"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>

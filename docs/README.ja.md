@@ -39,8 +39,33 @@
 
 ## プレビュー
 
-![Podsync Manager ダッシュボードプレビュー](../assets/dashboard-preview.svg)  
-*(機密認証情報およびプライベートトークンはセキュリティのため自動的にマスクされます。)*
+![Podsync Manager ダッシュボードプレビュー](../assets/screenshots/dashboard.png)  
+*(すべてのスクリーンショットはモックデータを使用しており、機密認証情報およびプライベートトークンは自動的にマスクされます。)*
+
+<details>
+<summary>📸 全ページのスクリーンショットを見る (10ページ)</summary>
+
+| ダッシュボード | フィード詳細 |
+| :---: | :---: |
+| ![ダッシュボード](../assets/screenshots/dashboard.png) | ![フィード詳細](../assets/screenshots/feed-detail.png) |
+
+| 新規フィード作成 (全項目展開) | フィード編集 (全項目展開) |
+| :---: | :---: |
+| ![新規フィード作成](../assets/screenshots/feed-new.png) | ![フィード編集](../assets/screenshots/feed-edit.png) |
+
+| 全エピソード一覧 | エピソード再生プレーヤー |
+| :---: | :---: |
+| ![全エピソード一覧](../assets/screenshots/episodes.png) | ![エピソード再生プレーヤー](../assets/screenshots/episode-player.png) |
+
+| リアルタイムコンテナログ | グローバル設定 (全項目展開) |
+| :---: | :---: |
+| ![コンテナログ](../assets/screenshots/logs.png) | ![グローバル設定](../assets/screenshots/settings.png) |
+
+| 設定差分 Diff ＆ 再起動モーダル | ログイン |
+| :---: | :---: |
+| ![設定差分 Diff モーダル](../assets/screenshots/config-diff-modal.png) | ![ログイン](../assets/screenshots/login.png) |
+
+</details>
 
 ---
 

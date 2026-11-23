@@ -39,8 +39,33 @@ Ohne `config.toml` manuell bearbeiten zu müssen, können Sie Feeds verwalten, T
 
 ## Vorschau
 
-![Podsync Manager Dashboard Vorschau](../assets/dashboard-preview.svg)  
-*(Sensible Zugangsdaten und private Tokens werden aus Sicherheitsgründen automatisch maskiert.)*
+![Podsync Manager Dashboard Vorschau](../assets/screenshots/dashboard.png)  
+*(Alle Screenshots verwenden Beispieldaten; sensible Zugangsdaten und private Tokens werden automatisch maskiert.)*
+
+<details>
+<summary>📸 Screenshots aller Seiten ansehen (10 Seiten)</summary>
+
+| Dashboard | Feed-Details |
+| :---: | :---: |
+| ![Dashboard](../assets/screenshots/dashboard.png) | ![Feed-Details](../assets/screenshots/feed-detail.png) |
+
+| Neuer Feed (Alles aufgeklappt) | Feed bearbeiten (Alles aufgeklappt) |
+| :---: | :---: |
+| ![Neuer Feed](../assets/screenshots/feed-new.png) | ![Feed bearbeiten](../assets/screenshots/feed-edit.png) |
+
+| Alle Episoden | Episoden-Audioplayer |
+| :---: | :---: |
+| ![Alle Episoden](../assets/screenshots/episodes.png) | ![Audioplayer](../assets/screenshots/episode-player.png) |
+
+| Echtzeit-Container-Logs | Globale Einstellungen (Alles aufgeklappt) |
+| :---: | :---: |
+| ![Container-Logs](../assets/screenshots/logs.png) | ![Globale Einstellungen](../assets/screenshots/settings.png) |
+
+| Config-Diff & Neustart-Modal | Anmeldung |
+| :---: | :---: |
+| ![Config-Diff-Modal](../assets/screenshots/config-diff-modal.png) | ![Anmeldung](../assets/screenshots/login.png) |
+
+</details>
 
 ---
 

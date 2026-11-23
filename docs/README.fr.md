@@ -39,8 +39,33 @@ Sans éditer `config.toml` à la main, gérez vos flux, inspectez les diffs TOML
 
 ## Aperçu
 
-![Aperçu du tableau de bord Podsync Manager](../assets/dashboard-preview.svg)  
-*(Les identifiants sensibles et jetons privés sont automatiquement masqués.)*
+![Aperçu du tableau de bord Podsync Manager](../assets/screenshots/dashboard.png)  
+*(Toutes les captures utilisent des données fictives ; les identifiants sensibles et jetons privés sont automatiquement masqués.)*
+
+<details>
+<summary>📸 Voir les captures de toutes les pages (10 pages)</summary>
+
+| Tableau de bord | Détail du flux |
+| :---: | :---: |
+| ![Tableau de bord](../assets/screenshots/dashboard.png) | ![Détail du flux](../assets/screenshots/feed-detail.png) |
+
+| Nouveau flux (Tout développé) | Modifier le flux (Tout développé) |
+| :---: | :---: |
+| ![Nouveau flux](../assets/screenshots/feed-new.png) | ![Modifier le flux](../assets/screenshots/feed-edit.png) |
+
+| Tous les épisodes | Lecteur audio |
+| :---: | :---: |
+| ![Tous les épisodes](../assets/screenshots/episodes.png) | ![Lecteur audio](../assets/screenshots/episode-player.png) |
+
+| Journaux en temps réel | Paramètres globaux (Tout développé) |
+| :---: | :---: |
+| ![Journaux](../assets/screenshots/logs.png) | ![Paramètres globaux](../assets/screenshots/settings.png) |
+
+| Modale Diff & Redémarrage | Connexion |
+| :---: | :---: |
+| ![Modale Diff](../assets/screenshots/config-diff-modal.png) | ![Connexion](../assets/screenshots/login.png) |
+
+</details>
 
 ---
 

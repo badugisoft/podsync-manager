@@ -39,8 +39,33 @@
 
 ## 미리보기
 
-![Podsync Manager 대시보드 미리보기](../assets/dashboard-preview.svg)  
-*(민감한 자격 증명 및 개인 토큰은 보안을 위해 자동 마스킹됩니다.)*
+![Podsync Manager 대시보드 미리보기](../assets/screenshots/dashboard.png)  
+*(모든 스크린샷은 목업 데이터를 사용하여 촬영되었으며, 민감한 자격 증명 및 개인 토큰은 보안을 위해 자동 마스킹됩니다.)*
+
+<details>
+<summary>📸 전체 페이지 스크린샷 보기 (10개 페이지)</summary>
+
+| 대시보드 | 피드 상세 |
+| :---: | :---: |
+| ![대시보드](../assets/screenshots/dashboard.png) | ![피드 상세](../assets/screenshots/feed-detail.png) |
+
+| 새 피드 추가 (전체 펼침) | 피드 수정 (전체 펼침) |
+| :---: | :---: |
+| ![새 피드 추가](../assets/screenshots/feed-new.png) | ![피드 수정](../assets/screenshots/feed-edit.png) |
+
+| 전체 에피소드 | 에피소드 오디오 플레이어 |
+| :---: | :---: |
+| ![전체 에피소드](../assets/screenshots/episodes.png) | ![에피소드 오디오 플레이어](../assets/screenshots/episode-player.png) |
+
+| 실시간 컨테이너 로그 | 전역 설정 (전체 펼침) |
+| :---: | :---: |
+| ![컨테이너 로그](../assets/screenshots/logs.png) | ![전역 설정](../assets/screenshots/settings.png) |
+
+| 설정 변경 Diff 및 적용 모달 | 로그인 |
+| :---: | :---: |
+| ![설정 변경 Diff 모달](../assets/screenshots/config-diff-modal.png) | ![로그인](../assets/screenshots/login.png) |
+
+</details>
 
 ---
 
